@@ -1,0 +1,431 @@
+{
+  "channel": {
+    "subscribers": "5.08K",
+    "photos": "383",
+    "videos": "15",
+    "links": "385",
+    "title": "бражники и берлинцы",
+    "description": "Куда сходить в Берлине.\n\nПомочь нам деньгами: events.genauberlin.de\n\nСвязаться: через личные сообщения каналу\n\nКупить рекламу: @EventsWerbungBot\n\nImpressum & Datenschutzerklärung: tinyurl.com/genau-impressum"
+  },
+  "posts_total": 393,
+  "id_range": [
+    5,
+    565
+  ],
+  "deleted_or_service": 168,
+  "date_range": [
+    "2026-04-23T17:56:36+00:00",
+    "2026-10-08T16:42:42+00:00"
+  ],
+  "days_covered": 168,
+  "posts_per_day_avg": 2.34,
+  "views": {
+    "total": 1230677,
+    "min": 724,
+    "p25": 2070,
+    "median": 2350,
+    "p75": 2660,
+    "p90": 6116,
+    "p95": 9691,
+    "max": 17800,
+    "avg": 3131
+  },
+  "reactions": {
+    "total": 8168,
+    "avg_per_post": 20.8,
+    "posts_with_any": 324,
+    "top_emoji": [
+      [
+        "❤‍🔥",
+        3333
+      ],
+      [
+        "❤",
+        2634
+      ],
+      [
+        "🔥",
+        548
+      ],
+      [
+        "👍",
+        428
+      ],
+      [
+        "😁",
+        263
+      ],
+      [
+        "🤣",
+        162
+      ],
+      [
+        "😱",
+        91
+      ],
+      [
+        "😐",
+        52
+      ],
+      [
+        "🦄",
+        45
+      ],
+      [
+        "🤨",
+        42
+      ],
+      [
+        "🗿",
+        37
+      ],
+      [
+        "😨",
+        36
+      ],
+      [
+        "🐳",
+        35
+      ],
+      [
+        "💔",
+        34
+      ],
+      [
+        "👌",
+        30
+      ],
+      [
+        "🙈",
+        28
+      ],
+      [
+        "🤝",
+        25
+      ],
+      [
+        "🙏",
+        24
+      ],
+      [
+        "🌚",
+        21
+      ],
+      [
+        "😭",
+        21
+      ]
+    ]
+  },
+  "media": {
+    "text_only": 80,
+    "photo": 303,
+    "video": 10
+  },
+  "edited_posts": 230,
+  "forwarded_posts": 0,
+  "reply_posts": 0,
+  "posts_by_dow": {
+    "пн": 67,
+    "вт": 58,
+    "ср": 68,
+    "чт": 91,
+    "пт": 55,
+    "сб": 31,
+    "вс": 23
+  },
+  "posts_by_hour": {
+    "0": 1,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 1,
+    "8": 0,
+    "9": 6,
+    "10": 13,
+    "11": 23,
+    "12": 28,
+    "13": 42,
+    "14": 51,
+    "15": 45,
+    "16": 44,
+    "17": 41,
+    "18": 30,
+    "19": 27,
+    "20": 21,
+    "21": 10,
+    "22": 8,
+    "23": 2
+  },
+  "posts_by_month": {
+    "2026-04": 17,
+    "2026-05": 59,
+    "2026-06": 79,
+    "2026-07": 68,
+    "2026-08": 70,
+    "2026-09": 79,
+    "2026-10": 21
+  },
+  "avg_views_by_dow": {
+    "пн": 3046,
+    "вт": 3433,
+    "ср": 2953,
+    "чт": 2848,
+    "пт": 3493,
+    "сб": 2925,
+    "вс": 3687
+  },
+  "avg_views_by_hour": {
+    "0": 2900,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 2710,
+    "8": 0,
+    "9": 2422,
+    "10": 3296,
+    "11": 3118,
+    "12": 3372,
+    "13": 2885,
+    "14": 3202,
+    "15": 3084,
+    "16": 3470,
+    "17": 3178,
+    "18": 3037,
+    "19": 3288,
+    "20": 2382,
+    "21": 3545,
+    "22": 3119,
+    "23": 2510
+  },
+  "avg_views_by_month": {
+    "2026-04": 2454,
+    "2026-05": 2997,
+    "2026-06": 2745,
+    "2026-07": 3208,
+    "2026-08": 3904,
+    "2026-09": 3035,
+    "2026-10": 3050
+  },
+  "gap_hours": {
+    "median": 4.4,
+    "mean": 10.3,
+    "max": 66.2
+  },
+  "top_domains": [
+    [
+      "t.me",
+      410
+    ],
+    [
+      "ra.co",
+      182
+    ],
+    [
+      "smb.museum",
+      70
+    ],
+    [
+      "fienta.com",
+      45
+    ],
+    [
+      "berghain.berlin",
+      45
+    ],
+    [
+      "instagram.com",
+      44
+    ],
+    [
+      "freiluftkino-kreuzberg.de",
+      37
+    ],
+    [
+      "dice.fm",
+      35
+    ],
+    [
+      "babylonberlin.eu",
+      35
+    ],
+    [
+      "yorck.de",
+      29
+    ],
+    [
+      "silent-green.net",
+      28
+    ],
+    [
+      "fetedelamusique.de",
+      24
+    ],
+    [
+      "kirillandfriends.com",
+      24
+    ],
+    [
+      "panda-platforma.berlin",
+      23
+    ],
+    [
+      "berlinerfestspiele.de",
+      22
+    ],
+    [
+      "freiluftkino-hasenheide.de",
+      21
+    ],
+    [
+      "lichtblick-kino.org",
+      19
+    ],
+    [
+      "humboldtforum.org",
+      18
+    ],
+    [
+      "maps.app.goo.gl",
+      17
+    ],
+    [
+      "youtube.com",
+      17
+    ],
+    [
+      "gretchen-club.de",
+      16
+    ],
+    [
+      "berlin.de",
+      15
+    ],
+    [
+      "so36.com",
+      15
+    ],
+    [
+      "freiluftkino-friedrichshain.de",
+      15
+    ],
+    [
+      "privatclub-berlin.de",
+      14
+    ],
+    [
+      "eventbrite.de",
+      13
+    ],
+    [
+      "arsenal-berlin.de",
+      13
+    ],
+    [
+      "konzerthaus.de",
+      12
+    ],
+    [
+      "industriekultur.berlin",
+      12
+    ],
+    [
+      "kw-berlin.de",
+      11
+    ]
+  ],
+  "top_mentions": [
+    [
+      "@butterflies_and_berliners",
+      679
+    ],
+    [
+      "@technoairberlin",
+      48
+    ],
+    [
+      "@genau",
+      8
+    ],
+    [
+      "@emigrationtothefuture",
+      4
+    ],
+    [
+      "@Vroobeli",
+      2
+    ],
+    [
+      "@GinaBorzykhSBP4",
+      2
+    ],
+    [
+      "@sauberlin",
+      2
+    ],
+    [
+      "@fermate",
+      2
+    ],
+    [
+      "@igrigrigrigr",
+      2
+    ],
+    [
+      "@dialoglab_eu",
+      1
+    ],
+    [
+      "@vtoroika",
+      1
+    ],
+    [
+      "@filmsweekly",
+      1
+    ],
+    [
+      "@kayakcenterpotsdam",
+      1
+    ],
+    [
+      "@vachedin",
+      1
+    ],
+    [
+      "@thedailyprophet",
+      1
+    ],
+    [
+      "@kanzlerberghain",
+      1
+    ],
+    [
+      "@UznalSlovo",
+      1
+    ],
+    [
+      "@babelbooksberlin",
+      1
+    ],
+    [
+      "@reforumspaceberlin",
+      1
+    ]
+  ],
+  "top_hashtags": [
+    [
+      "#motherfuckinghood",
+      1
+    ],
+    [
+      "#ночнойрозыгрыш",
+      1
+    ]
+  ]
+}

@@ -1,0 +1,48 @@
+[2026-10-08 20:54:39] GET https://t.me/s/butterflies_and_berliners
+[2026-10-08 20:54:40] channel meta: {'subscribers': '5.08K', 'photos': '383', 'videos': '15', 'links': '385', 'title': 'бражники и берлинцы', 'description': 'Куда сходить в Берлине.\n\nПомочь нам деньгами: events.genauberlin.de\n\nСвязаться: через личные сообщения каналу\n\nКупить рекламу: @EventsWerbungBot\n\nImpressum & Datenschutzerklärung: tinyurl.com/genau-impressum'}
+[2026-10-08 20:54:40] first page: 20 posts, ids 543..565
+[2026-10-08 20:54:40] GET before=543
+[2026-10-08 20:54:40] page ids 519..542  added=16  total=36
+[2026-10-08 20:54:41] GET before=519
+[2026-10-08 20:54:41] page ids 494..517  added=18  total=54
+[2026-10-08 20:54:42] GET before=494
+[2026-10-08 20:54:42] page ids 466..493  added=18  total=72
+[2026-10-08 20:54:42] GET before=466
+[2026-10-08 20:54:43] page ids 444..465  added=15  total=87
+[2026-10-08 20:54:44] GET before=444
+[2026-10-08 20:54:44] page ids 419..442  added=17  total=104
+[2026-10-08 20:54:44] GET before=419
+[2026-10-08 20:54:45] page ids 392..418  added=18  total=122
+[2026-10-08 20:54:45] GET before=392
+[2026-10-08 20:54:46] page ids 369..391  added=19  total=141
+[2026-10-08 20:54:46] GET before=369
+[2026-10-08 20:54:47] page ids 347..367  added=18  total=159
+[2026-10-08 20:54:47] GET before=347
+[2026-10-08 20:54:48] page ids 325..344  added=19  total=178
+[2026-10-08 20:54:48] GET before=325
+[2026-10-08 20:54:49] page ids 298..324  added=18  total=196
+[2026-10-08 20:54:49] GET before=298
+[2026-10-08 20:54:50] page ids 266..297  added=12  total=208
+[2026-10-08 20:54:50] GET before=266
+[2026-10-08 20:54:51] page ids 216..245  added=18  total=226
+[2026-10-08 20:54:51] GET before=216
+[2026-10-08 20:54:52] page ids 193..214  added=18  total=244
+[2026-10-08 20:54:52] GET before=193
+[2026-10-08 20:54:53] page ids 166..192  added=20  total=264
+[2026-10-08 20:54:53] GET before=166
+[2026-10-08 20:54:54] page ids 142..165  added=18  total=282
+[2026-10-08 20:54:54] GET before=142
+[2026-10-08 20:54:54] page ids 120..141  added=19  total=301
+[2026-10-08 20:54:55] GET before=120
+[2026-10-08 20:54:55] page ids 97..119  added=18  total=319
+[2026-10-08 20:54:56] GET before=97
+[2026-10-08 20:54:56] page ids 72..96  added=20  total=339
+[2026-10-08 20:54:57] GET before=72
+[2026-10-08 20:54:57] page ids 50..71  added=18  total=357
+[2026-10-08 20:54:58] GET before=50
+[2026-10-08 20:54:58] page ids 28..49  added=18  total=375
+[2026-10-08 20:54:58] GET before=28
+[2026-10-08 20:54:59] page ids 1..27  added=19  total=394
+[2026-10-08 20:54:59] reached beginning of channel
+[2026-10-08 20:54:59] done: 394 posts written to /Users/angelinazajceva/brazhniki-stats/posts.jsonl
+[2026-10-08 20:54:59] id range: 1..565  expected max ~565  missing in range (deleted): 171
