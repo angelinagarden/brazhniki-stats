@@ -93,8 +93,8 @@ def build_data() -> dict:
     digests_weeks: dict[str, Counter] = defaultdict(Counter)
     for d_entry in digests_topics_raw.values():
         wk = iso_week_key(dt_local(d_entry["date"]))
-        for cat, n in d_entry["by_category"].items():
-            digests_weeks[wk][cat] += n
+        for cat_key, n in d_entry["by_category"].items():
+            digests_weeks[wk][cat_key] += n
     digests_series = {}
     for c in CAT_ORDER:
         vals = [digests_weeks[w][c] for w in week_keys]
