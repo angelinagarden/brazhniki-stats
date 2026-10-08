@@ -348,8 +348,8 @@ footer .legal{font-size:11px;color:#888;margin-top:40px;padding-top:20px;
     <section class="hero" id="overview" style="border-bottom:none">
       <h1>Куда ходит<br>Берлин.</h1>
       <p class="motto">
-        <span class="inv">@butterflies_and_berliners</span> &mdash; афиша на &nbsp;<b>__SUBS__</b>&nbsp; подписчиков про&nbsp;
-        <span class="hl">музыку,&nbsp;кино,&nbsp;клубы,&nbsp;выставки&nbsp;и&nbsp;театр</span>. Разобрали всё, что он опубликовал за __DAYS__ дней.
+        <span class="inv">@butterflies_and_berliners</span> &mdash; наша с командой <b>GENAU</b> афиша на&nbsp;<b>__SUBS__</b>&nbsp;подписчиков про&nbsp;
+        <span class="hl">музыку,&nbsp;кино,&nbsp;клубы,&nbsp;выставки&nbsp;и&nbsp;театр</span>. Разобрали всё, что мы опубликовали за __DAYS__ дней.
       </p>
       <p class="meta">
         <span>Период:&nbsp;<b>__PERIOD__</b></span>
@@ -371,8 +371,8 @@ footer .legal{font-size:11px;color:#888;margin-top:40px;padding-top:20px;
   <div class="wrap">
 
     <section id="topics">
-      <h2>О чём пишут.</h2>
-      <p class="lead">Каждый пост размечен ключевыми словами по одной основной тематике из десяти. Multi-label возможен, но primary = max score. Правила разметки — в <code>classify.py</code>.</p>
+      <h2>О чём пишем.</h2>
+      <p class="lead">Каждый наш пост размечен ключевыми словами по одной основной тематике из десяти. Multi-label возможен, но primary = max score. Правила разметки — в <code>classify.py</code>.</p>
 
       <div class="grid-2">
         <div>
@@ -391,11 +391,11 @@ footer .legal{font-size:11px;color:#888;margin-top:40px;padding-top:20px;
     </section>
 
     <section id="when">
-      <h2>Когда постят.</h2>
-      <p class="lead">Берлинское локальное время. Канал ярко сконцентрирован в четверг днём (анонс выходных), сб-вс &mdash; тишина.</p>
+      <h2>Когда постим.</h2>
+      <p class="lead">Берлинское локальное время. Пик у нас в четверг днём (анонс выходных), сб-вс &mdash; почти не публикуем.</p>
 
       <div class="grid-1" style="margin-bottom:24px">
-        <p class="chart-title">Карта активности: день недели × час</p>
+        <p class="chart-title">Карта нашей активности: день недели × час</p>
         <p class="chart-sub">цвет = количество постов в этом слоте</p>
         <div id="chart-heatmap" class="chart"></div>
       </div>
@@ -407,22 +407,22 @@ footer .legal{font-size:11px;color:#888;margin-top:40px;padding-top:20px;
       </div>
 
       <div class="grid-1">
-        <p class="chart-title">Рост охвата по месяцам</p>
+        <p class="chart-title">Наш охват по месяцам</p>
         <p class="chart-sub">средние просмотры поста (линия) и количество постов в месяц (столбики)</p>
         <div id="chart-monthly" class="chart"></div>
       </div>
     </section>
 
     <section id="reactions">
-      <h2>На что реагируют.</h2>
-      <p class="lead">Фирменная реакция канала &mdash; <span class="hl">❤&zwj;🔥</span> (пламенное сердце), почти половина всех. Классический 👍 заметно ниже популярных эмоций.</p>
+      <h2>На что реагируют читатели.</h2>
+      <p class="lead">Наша фирменная реакция &mdash; <span class="hl">❤&zwj;🔥</span> (пламенное сердце), почти половина всех. Классический 👍 заметно ниже популярных эмоций — наше ядро не кивает нейтрально, оно влюбляется в эвент.</p>
 
       <div class="emoji-row" id="emoji-row"></div>
     </section>
 
     <section id="domains">
-      <h2>Куда ведут ссылки.</h2>
-      <p class="lead">Внешние домены, упомянутые в постах. Отдельно &mdash; упоминания @-каналов (включая ссылки на t.me/*).</p>
+      <h2>Куда ведут наши ссылки.</h2>
+      <p class="lead">Внешние домены, которые мы упоминаем в постах. Отдельно &mdash; упоминания @-каналов (включая ссылки на t.me/*).</p>
 
       <div class="dom-grid">
         <div>
@@ -439,17 +439,17 @@ footer .legal{font-size:11px;color:#888;margin-top:40px;padding-top:20px;
     </section>
 
     <section id="top">
-      <h2>Топ-25 по просмотрам.</h2>
-      <p class="lead">Самые популярные посты за весь период. Клик по заголовку &mdash; открыть в Telegram.</p>
+      <h2>Наш топ-25 по просмотрам.</h2>
+      <p class="lead">Самые популярные наши посты за весь период. Клик по заголовку &mdash; открыть в Telegram.</p>
       <div class="toplist" id="toplist"></div>
     </section>
 
     <section>
-      <h2>Как собрано.</h2>
+      <h2>Как мы это собрали.</h2>
       <p class="lead" style="max-width:860px">
         Данные собраны с публичного превью <code>t.me/s/butterflies_and_berliners?before=&lt;id&gt;</code> &mdash; без логина, без MCP, без API-ключей. Все просмотры и реакции &mdash; срез на момент сбора; историческая динамика недоступна в превью.
         <br><br>
-        Исходники (fetch, analyze, classify, build_landing) лежат в <code>~/brazhniki-stats/</code>. Весь пайплайн &mdash; четыре Python-скрипта, воспроизводимо из requirements.txt.
+        Исходники (fetch, analyze, classify, build_landing) лежат в <a href="https://github.com/angelinagarden/brazhniki-stats" target="_blank">github.com/angelinagarden/brazhniki-stats</a>. Весь пайплайн &mdash; четыре Python-скрипта, воспроизводимо из requirements.txt.
       </p>
     </section>
   </div>
@@ -458,12 +458,13 @@ footer .legal{font-size:11px;color:#888;margin-top:40px;padding-top:20px;
 <footer>
   <div class="foot-wrap">
     <div>
-      <p class="big">brazhniki stats &mdash; срез на __GENERATED__.<br>Собран локально, без доступа к аккаунту канала.</p>
+      <p class="big">brazhniki stats &mdash; срез на __GENERATED__.<br>Собрали локально, без админ-доступа к каналу — только публичный превью.</p>
     </div>
     <div>
-      <h3>Канал</h3>
+      <h3>Наш канал</h3>
       <p><a href="https://t.me/butterflies_and_berliners" target="_blank">@butterflies_and_berliners</a></p>
       <p>__SUBS__ подписчиков</p>
+      <p style="color:#888">команда GENAU</p>
     </div>
     <div>
       <h3>Контакт</h3>
