@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-LAND = HERE / "landing"
+LAND = HERE / "docs"
 LAND.mkdir(exist_ok=True)
 
 POSTS = HERE / "posts_cat.jsonl"
