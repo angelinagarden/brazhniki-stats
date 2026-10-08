@@ -351,9 +351,8 @@ footer .legal{font-size:11px;color:#888;margin-top:40px;padding-top:20px;
 <main>
   <div class="wrap">
     <section class="hero" id="overview" style="border-bottom:none">
-      <h1>Куда ходит<br>Берлин.</h1>
       <p class="motto">
-        <span class="inv">@butterflies_and_berliners</span> &mdash; наша с командой <b>GENAU</b> афиша на&nbsp;<b>__SUBS__</b>&nbsp;подписчиков про&nbsp;
+        <span class="inv">@butterflies_and_berliners</span> &mdash; канал про&nbsp;
         <span class="hl">музыку,&nbsp;кино,&nbsp;клубы,&nbsp;выставки&nbsp;и&nbsp;театр</span>. Разобрали всё, что мы опубликовали за __DAYS__ дней.
       </p>
       <p class="meta">
