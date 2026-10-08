@@ -22,6 +22,7 @@ POSTS = HERE / "posts_cat.jsonl"
 STATS = HERE / "stats.json"
 CAT = HERE / "cat_stats.json"
 CHAN = HERE / "channel.json"
+DIGESTS = HERE / "digests_topics.json"
 
 RU_DOW = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
 
@@ -86,6 +87,20 @@ def build_data() -> dict:
         if any(weeks[w][c] for w in week_keys):
             timeline_series[c] = [weeks[w][c] for w in week_keys]
 
+    # ------- digests, broken down by topics MENTIONED INSIDE each digest -------
+    # Parsed by parse_digests.py — section headers in the digest text.
+    digests_topics_raw = json.loads(DIGESTS.read_text()) if DIGESTS.exists() else {}
+    digests_weeks: dict[str, Counter] = defaultdict(Counter)
+    for d_entry in digests_topics_raw.values():
+        wk = iso_week_key(dt_local(d_entry["date"]))
+        for cat, n in d_entry["by_category"].items():
+            digests_weeks[wk][cat] += n
+    digests_series = {}
+    for c in CAT_ORDER:
+        vals = [digests_weeks[w][c] for w in week_keys]
+        if any(vals):
+            digests_series[c] = vals
+
     # ------- hour × dow heatmap -------
     heatmap: dict[tuple[int, int], int] = defaultdict(int)
     for p in posts:
@@ -149,6 +164,12 @@ def build_data() -> dict:
         "timeline": {
             "week_keys": week_keys,
             "series": timeline_series,
+        },
+        "digests_timeline": {
+            "week_keys": week_keys,
+            "series": digests_series,
+            "n_digests": len(digests_topics_raw),
+            "total_events": sum(sum(c.values()) for c in digests_weeks.values()),
         },
         "heatmap": heat,
         "top_by_cat": top_by_cat,
@@ -411,9 +432,9 @@ footer .legal{font-size:11px;color:#888;margin-top:40px;padding-top:20px;
       </div>
 
       <div class="grid-1" style="margin-bottom:24px">
-        <p class="chart-title">Темп по неделям — еженедельные дайджесты</p>
-        <p class="chart-sub">посты формата «События недели: …» — наши weekly roundup'ы</p>
-        <div id="chart-digests" class="chart"></div>
+        <p class="chart-title">Темп по неделям — события внутри дайджестов</p>
+        <p class="chart-sub">стек по тематике событий, которые мы включили в weekly roundup «События недели»</p>
+        <div id="chart-digests" class="chart chart-tall"></div>
       </div>
 
       <div class="grid-1">
@@ -644,32 +665,29 @@ const catColor = c => D.cat_colors[c] || '#999';
   window.addEventListener('resize',()=>chart.resize());
 })();
 
-// -------- weekly digests, standalone --------
+// -------- digests broken down by event topics INSIDE each digest --------
 (function(){
   const el = document.getElementById('chart-digests');
-  if (!el) return;
+  if (!el || !D.digests_timeline) return;
   const chart = echarts.init(el);
-  const digestData = D.timeline.series.digest || D.timeline.week_keys.map(() => 0);
+  const cats = Object.keys(D.digests_timeline.series);
+  const series = cats.map(c => ({
+    name: catLabel(c),
+    type:'bar', stack:'t',
+    data: D.digests_timeline.series[c],
+    itemStyle:{color:catColor(c)},
+  }));
   chart.setOption({
-    tooltip:{trigger:'axis',axisPointer:{type:'shadow'},
-      formatter: args => {
-        const i = args[0].dataIndex;
-        const n = digestData[i];
-        return `<b>${D.timeline.week_keys[i]}</b><br>${n} дайджест${n===1?'':(n<5?'а':'ов')}`;
-      }},
-    grid:{left:50,right:30,top:20,bottom:50},
-    xAxis:{type:'category',data:D.timeline.week_keys,
+    tooltip:{trigger:'axis',axisPointer:{type:'shadow'}},
+    legend:{bottom:0,textStyle:{fontFamily:'Inter'},type:'scroll'},
+    grid:{left:50,right:30,top:20,bottom:70},
+    xAxis:{type:'category',data:D.digests_timeline.week_keys,
       axisLabel:{fontFamily:'JetBrains Mono',fontSize:10,
         formatter: v => v.replace(/^20/,'')}},
-    yAxis:{type:'value',name:'дайджестов/нед',minInterval:1,
+    yAxis:{type:'value',name:'событий в дайджесте',minInterval:1,
       splitLine:{lineStyle:{color:'#eee'}},
       axisLabel:{fontFamily:'JetBrains Mono'}},
-    series:[{
-      type:'bar',
-      data:digestData,
-      itemStyle:{color:catColor('digest')},
-      barWidth:'70%',
-    }],
+    series,
   });
   window.addEventListener('resize',()=>chart.resize());
 })();
