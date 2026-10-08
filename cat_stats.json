@@ -1,0 +1,185 @@
+{
+  "total_posts": 393,
+  "categories": {
+    "music": {
+      "label": "музыка (концерты, DJ, live)",
+      "count": 99,
+      "share": 25.2,
+      "avg_views": 2832,
+      "median_views": 2310,
+      "avg_reactions": 19.0,
+      "avg_engagement_pct": 0.76,
+      "top_post_id": 211,
+      "top_post_views": 12600,
+      "sample_ids": [
+        211,
+        367,
+        156,
+        444,
+        160
+      ]
+    },
+    "cinema": {
+      "label": "кино",
+      "count": 88,
+      "share": 22.4,
+      "avg_views": 3994,
+      "median_views": 2405,
+      "avg_reactions": 23.6,
+      "avg_engagement_pct": 0.8,
+      "top_post_id": 266,
+      "top_post_views": 16200,
+      "sample_ids": [
+        266,
+        438,
+        339,
+        356,
+        139
+      ]
+    },
+    "theatre": {
+      "label": "театр / перформанс",
+      "count": 34,
+      "share": 8.7,
+      "avg_views": 3377,
+      "median_views": 2225,
+      "avg_reactions": 20.5,
+      "avg_engagement_pct": 0.78,
+      "top_post_id": 412,
+      "top_post_views": 11100,
+      "sample_ids": [
+        412,
+        130,
+        342,
+        85,
+        66
+      ]
+    },
+    "exhibitions": {
+      "label": "выставки / музеи",
+      "count": 59,
+      "share": 15.0,
+      "avg_views": 2659,
+      "median_views": 2430,
+      "avg_reactions": 22.3,
+      "avg_engagement_pct": 0.88,
+      "top_post_id": 62,
+      "top_post_views": 9410,
+      "sample_ids": [
+        62,
+        135,
+        433,
+        503,
+        9
+      ]
+    },
+    "parties_clubs": {
+      "label": "вечеринки / клубы",
+      "count": 50,
+      "share": 12.7,
+      "avg_views": 2581,
+      "median_views": 2320,
+      "avg_reactions": 17.2,
+      "avg_engagement_pct": 0.71,
+      "top_post_id": 213,
+      "top_post_views": 9930,
+      "sample_ids": [
+        213,
+        291,
+        10,
+        341,
+        460
+      ]
+    },
+    "lectures": {
+      "label": "лекции / талки",
+      "count": 12,
+      "share": 3.1,
+      "avg_views": 2751,
+      "median_views": 2220,
+      "avg_reactions": 19,
+      "avg_engagement_pct": 0.73,
+      "top_post_id": 166,
+      "top_post_views": 8790,
+      "sample_ids": [
+        166,
+        407,
+        418,
+        343,
+        482
+      ]
+    },
+    "food_market": {
+      "label": "еда / маркет",
+      "count": 18,
+      "share": 4.6,
+      "avg_views": 3219,
+      "median_views": 2450,
+      "avg_reactions": 21.6,
+      "avg_engagement_pct": 0.83,
+      "top_post_id": 425,
+      "top_post_views": 17800,
+      "sample_ids": [
+        425,
+        517,
+        509,
+        499,
+        142
+      ]
+    },
+    "outdoor_sports": {
+      "label": "улица / спорт",
+      "count": 7,
+      "share": 1.8,
+      "avg_views": 5116,
+      "median_views": 2520,
+      "avg_reactions": 23.9,
+      "avg_engagement_pct": 0.69,
+      "top_post_id": 325,
+      "top_post_views": 14900,
+      "sample_ids": [
+        325,
+        69,
+        439,
+        333,
+        123
+      ]
+    },
+    "community_meta": {
+      "label": "сообщество / мета-посты",
+      "count": 6,
+      "share": 1.5,
+      "avg_views": 2312,
+      "median_views": 2195,
+      "avg_reactions": 19.7,
+      "avg_engagement_pct": 0.85,
+      "top_post_id": 500,
+      "top_post_views": 2880,
+      "sample_ids": [
+        500,
+        519,
+        79,
+        216,
+        448
+      ]
+    },
+    "other": {
+      "label": "прочее",
+      "count": 20,
+      "share": 5.1,
+      "avg_views": 2871,
+      "median_views": 2395,
+      "avg_reactions": 22.1,
+      "avg_engagement_pct": 0.91,
+      "top_post_id": 546,
+      "top_post_views": 10200,
+      "sample_ids": [
+        546,
+        560,
+        465,
+        212,
+        534
+      ]
+    }
+  }
+}

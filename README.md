@@ -4,22 +4,38 @@
 
 ## Что внутри
 
-- `fetch.py` — скрейпер. Проходит `t.me/s/butterflies_and_berliners?before=<id>` с пагинацией, парсит id/дату/текст/views/реакции/медиа.
-- `analyze.py` — считает статистику, рисует отчёт.
-- `posts.jsonl` — все распарсенные посты, по одному JSON на строку.
+### Скрипты
+- `fetch.py` — скрейпер. Проходит `t.me/s/butterflies_and_berliners?before=<id>` с пагинацией, парсит id/дату/текст/views/реакции/медиа. Через `curl` subprocess (Python SSL ломается об MITM).
+- `analyze.py` — считает общую статистику, рисует текстовый отчёт.
+- `classify.py` — keyword-разметка постов по 10 тематическим категориям (music / cinema / theatre / exhibitions / parties_clubs / lectures / food_market / outdoor_sports / community_meta / other).
+- `infographic.py` — рендерит PNG-инфографику через matplotlib.
+
+### Данные
+- `posts.jsonl` — все распарсенные посты (1 JSON на строку).
+- `posts_cat.jsonl` — то же + категории и engagement.
 - `channel.json` — счётчики канала (подписчики, фото, видео, ссылки).
-- `report.md` — главный отчёт для чтения.
-- `tops.md` — топ-25 по разным срезам (просмотры, реакции, engagement).
-- `stats.json` — всё числовое.
+- `stats.json` — агрегированная статистика (все числовое).
+- `cat_stats.json` — аггрегаты по категориям.
 - `raw_pages/` — кэш HTML-страниц (gitignored).
 - `fetch.log` — лог сбора.
 
-## Как перезапустить
+### Отчёты
+- `report.md` — главный текстовый отчёт.
+- `tops.md` — топ-25 по разным срезам (просмотры, реакции, engagement).
+- `figs/00_dashboard.png` — главная инфографика (все панели в одной картинке).
+- `figs/01..07_*.png` — отдельные панели.
+
+## Как запустить с нуля
 
 ```bash
 cd ~/brazhniki-stats
-python3 fetch.py        # ~1 минута, собирает всё заново
-python3 analyze.py      # <1 сек, обновляет report/tops/stats
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+
+.venv/bin/python fetch.py        # ~1 минута — собирает все посты
+.venv/bin/python analyze.py      # <1 сек — пересчитывает report/stats
+.venv/bin/python classify.py     # <1 сек — размечает тематику
+.venv/bin/python infographic.py  # ~3 сек — рендерит PNG в figs/
 ```
 
 ## Что отдаёт публичный превью
