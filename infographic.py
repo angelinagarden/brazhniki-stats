@@ -38,19 +38,22 @@ RU_DOW = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
 
 # Palette (reasonably distinct, print-friendly)
 CAT_COLORS = {
-    "music":          "#e74c3c",
-    "cinema":         "#f39c12",
-    "theatre":        "#9b59b6",
-    "exhibitions":    "#3498db",
-    "parties_clubs":  "#1abc9c",
-    "lectures":       "#95a5a6",
-    "food_market":    "#e67e22",
-    "outdoor_sports": "#27ae60",
-    "community_meta": "#7f8c8d",
-    "other":          "#bdc3c7",
+    "music_concert":   "#e74c3c",
+    "music_classical": "#6c3483",
+    "club_party":      "#1abc9c",
+    "cinema":          "#f39c12",
+    "theatre_dance":   "#9b59b6",
+    "exhibitions":     "#3498db",
+    "lectures_talks":  "#95a5a6",
+    "food_market":     "#e67e22",
+    "outdoor_sports":  "#27ae60",
+    "digest":          "#f1c40f",
+    "community_meta":  "#7f8c8d",
+    "other":           "#bdc3c7",
 }
-CAT_ORDER = ["music", "cinema", "exhibitions", "parties_clubs", "theatre",
-             "food_market", "lectures", "outdoor_sports", "community_meta", "other"]
+CAT_ORDER = ["music_concert", "cinema", "exhibitions", "club_party", "theatre_dance",
+             "digest", "outdoor_sports", "lectures_talks", "food_market",
+             "music_classical", "community_meta", "other"]
 
 plt.rcParams.update({
     "font.family": "DejaVu Sans",
@@ -231,16 +234,18 @@ def panel_views_dist(ax, posts):
 
 def cat_label_short(c: str) -> str:
     return {
-        "music": "музыка",
-        "cinema": "кино",
-        "theatre": "театр",
-        "exhibitions": "выставки",
-        "parties_clubs": "клубы",
-        "lectures": "лекции",
-        "food_market": "еда",
-        "outdoor_sports": "улица",
-        "community_meta": "мета",
-        "other": "прочее",
+        "music_concert":   "концерты",
+        "music_classical": "классика",
+        "club_party":      "клубы",
+        "cinema":          "кино",
+        "theatre_dance":   "театр",
+        "exhibitions":     "выставки",
+        "lectures_talks":  "лекции",
+        "food_market":     "еда",
+        "outdoor_sports":  "улица",
+        "digest":          "дайджест",
+        "community_meta":  "мета",
+        "other":           "прочее",
     }.get(c, c)
 
 

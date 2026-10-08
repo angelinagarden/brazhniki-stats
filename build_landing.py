@@ -26,31 +26,36 @@ CHAN = HERE / "channel.json"
 RU_DOW = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
 
 CAT_COLORS = {
-    "music":          "#e74c3c",
-    "cinema":         "#f39c12",
-    "theatre":        "#9b59b6",
-    "exhibitions":    "#3498db",
-    "parties_clubs":  "#1abc9c",
-    "lectures":       "#95a5a6",
-    "food_market":    "#e67e22",
-    "outdoor_sports": "#27ae60",
-    "community_meta": "#7f8c8d",
-    "other":          "#bdc3c7",
+    "music_concert":   "#e74c3c",
+    "music_classical": "#6c3483",
+    "club_party":      "#1abc9c",
+    "cinema":          "#f39c12",
+    "theatre_dance":   "#9b59b6",
+    "exhibitions":     "#3498db",
+    "lectures_talks":  "#95a5a6",
+    "food_market":     "#e67e22",
+    "outdoor_sports":  "#27ae60",
+    "digest":          "#f1c40f",
+    "community_meta":  "#7f8c8d",
+    "other":           "#bdc3c7",
 }
 CAT_LABELS = {
-    "music":          "музыка",
-    "cinema":         "кино",
-    "theatre":        "театр",
-    "exhibitions":    "выставки",
-    "parties_clubs":  "клубы",
-    "lectures":       "лекции",
-    "food_market":    "еда",
-    "outdoor_sports": "улица",
-    "community_meta": "мета",
-    "other":          "прочее",
+    "music_concert":   "концерты",
+    "music_classical": "классика / опера",
+    "club_party":      "клубы / техно",
+    "cinema":          "кино",
+    "theatre_dance":   "театр / танец",
+    "exhibitions":     "выставки",
+    "lectures_talks":  "лекции / талки",
+    "food_market":     "еда / маркеты",
+    "outdoor_sports":  "улица / спорт",
+    "digest":          "дайджесты",
+    "community_meta":  "мета",
+    "other":           "прочее",
 }
-CAT_ORDER = ["music", "cinema", "exhibitions", "parties_clubs", "theatre",
-             "food_market", "lectures", "outdoor_sports", "community_meta", "other"]
+CAT_ORDER = ["music_concert", "cinema", "exhibitions", "club_party", "theatre_dance",
+             "digest", "outdoor_sports", "lectures_talks", "food_market",
+             "music_classical", "community_meta", "other"]
 
 
 def dt_local(iso: str) -> datetime:
