@@ -405,9 +405,15 @@ footer .legal{font-size:11px;color:#888;margin-top:40px;padding-top:20px;
       </div>
 
       <div class="grid-1" style="margin-bottom:24px">
-        <p class="chart-title">Темп по неделям, стек по тематике</p>
-        <p class="chart-sub">клики по легенде переключают серии; наведись на столбик — разбивка</p>
+        <p class="chart-title">Темп по неделям — посты про события</p>
+        <p class="chart-sub">стек по тематике; дайджесты недели вынесены на отдельный график ниже</p>
         <div id="chart-timeline" class="chart chart-tall"></div>
+      </div>
+
+      <div class="grid-1" style="margin-bottom:24px">
+        <p class="chart-title">Темп по неделям — еженедельные дайджесты</p>
+        <p class="chart-sub">посты формата «События недели: …» — наши weekly roundup'ы</p>
+        <div id="chart-digests" class="chart"></div>
       </div>
 
       <div class="grid-1">
@@ -614,10 +620,10 @@ const catColor = c => D.cat_colors[c] || '#999';
   window.addEventListener('resize',()=>chart.resize());
 })();
 
-// -------- weekly timeline stacked --------
+// -------- weekly timeline stacked (events, excluding digests) --------
 (function(){
   const chart = echarts.init(document.getElementById('chart-timeline'));
-  const cats = Object.keys(D.timeline.series);
+  const cats = Object.keys(D.timeline.series).filter(c => c !== 'digest');
   const series = cats.map(c => ({
     name: catLabel(c),
     type:'bar', stack:'t',
@@ -634,6 +640,36 @@ const catColor = c => D.cat_colors[c] || '#999';
     yAxis:{type:'value',name:'постов/нед',splitLine:{lineStyle:{color:'#eee'}},
       axisLabel:{fontFamily:'JetBrains Mono'}},
     series,
+  });
+  window.addEventListener('resize',()=>chart.resize());
+})();
+
+// -------- weekly digests, standalone --------
+(function(){
+  const el = document.getElementById('chart-digests');
+  if (!el) return;
+  const chart = echarts.init(el);
+  const digestData = D.timeline.series.digest || D.timeline.week_keys.map(() => 0);
+  chart.setOption({
+    tooltip:{trigger:'axis',axisPointer:{type:'shadow'},
+      formatter: args => {
+        const i = args[0].dataIndex;
+        const n = digestData[i];
+        return `<b>${D.timeline.week_keys[i]}</b><br>${n} дайджест${n===1?'':(n<5?'а':'ов')}`;
+      }},
+    grid:{left:50,right:30,top:20,bottom:50},
+    xAxis:{type:'category',data:D.timeline.week_keys,
+      axisLabel:{fontFamily:'JetBrains Mono',fontSize:10,
+        formatter: v => v.replace(/^20/,'')}},
+    yAxis:{type:'value',name:'дайджестов/нед',minInterval:1,
+      splitLine:{lineStyle:{color:'#eee'}},
+      axisLabel:{fontFamily:'JetBrains Mono'}},
+    series:[{
+      type:'bar',
+      data:digestData,
+      itemStyle:{color:catColor('digest')},
+      barWidth:'70%',
+    }],
   });
   window.addEventListener('resize',()=>chart.resize());
 })();
