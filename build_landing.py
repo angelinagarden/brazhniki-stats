@@ -596,7 +596,7 @@ const catColor = c => D.cat_colors[c] || '#999';
   const maxV = Math.max(...D.heatmap.map(r=>r[2]));
   chart.setOption({
     tooltip:{position:'top',
-      formatter: p => `<b>${D.ru_dow[p.data[0]]} ${String(p.data[1]).padStart(2,'0')}:00</b><br>${p.data[2]} постов`},
+      formatter: p => `<b>${D.ru_dow[p.data[1]]} ${String(p.data[0]).padStart(2,'0')}:00</b><br>${p.data[2]} постов`},
     grid:{left:50,right:40,top:30,bottom:40},
     xAxis:{type:'category',data:Array.from({length:24},(_,i)=>String(i).padStart(2,'0')),
       splitArea:{show:false},axisLabel:{fontFamily:'JetBrains Mono'}},
