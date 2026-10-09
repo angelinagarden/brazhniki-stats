@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Таро агентов — RL и планирование</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#f3ecdd;--dim:#b9ad8f;--gold:#c9a24b;--line:#3a3658;--bg:#15132a;--bg2:#1d1a39;--card:#201d3e;}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 800px at 50% -10%,#241f47 0,var(--bg) 60%);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding:clamp(28px,5vw,72px) clamp(16px,4vw,40px)}
+.hero{text-align:center;border-bottom:1px solid var(--line);padding-bottom:40px;margin-bottom:28px}
+.hero .kicker{letter-spacing:.32em;text-transform:uppercase;font-size:12px;color:var(--gold)}
+h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(34px,6vw,60px);margin:.25em 0 .1em;line-height:1.05}
+.hero .sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(17px,2.4vw,23px);color:var(--dim);max-width:62ch;margin:.4em auto 0}
+.thesis{max-width:70ch;margin:22px auto 0;color:var(--dim);font-size:15px}
+.legend{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:22px 0 0;font-size:12px;color:var(--dim)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:9px;height:9px;border-radius:50%}
+.d-rl{background:#d98a8a}.d-pl{background:#8ab0d9}.d-br{background:var(--gold)}
+.act{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,3.4vw,32px);color:var(--gold);text-align:center;margin:48px 0 20px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.card{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:14px;position:relative;overflow:hidden}
+.card:before{content:"";position:absolute;inset:7px;border:1px solid rgba(201,162,75,.28);border-radius:9px;pointer-events:none}
+.card-inner{padding:20px 20px 18px}
+.card-top{display:flex;justify-content:space-between;align-items:center}
+.num{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);font-weight:600}
+.tag{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);padding:3px 8px;border-radius:999px}
+.emblem{text-align:center;color:var(--gold);font-size:22px;margin:6px 0 2px;opacity:.85}
+.arc{font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:600;text-align:center;margin:2px 0 6px}
+.why{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--gold);text-align:center;margin:0 0 12px;font-size:16px}
+hr{border:none;border-top:1px solid var(--line);margin:12px 0}
+.paper{font-size:16px;margin:0 0 3px;font-weight:600}
+.byline{font-size:12px;color:var(--dim);margin:0 0 10px}
+.plain{font-size:14.5px;margin:0 0 12px}
+details{border-top:1px dashed var(--line);padding-top:8px}
+summary{cursor:pointer;font-size:12.5px;color:var(--gold);letter-spacing:.04em}
+.abstract{font-size:13px;color:var(--dim);margin:8px 0 0;font-style:italic}
+.src{display:inline-block;margin-top:12px;font-size:12px;color:var(--dim);text-decoration:none;border-bottom:1px solid var(--line)}
+.src:hover{color:var(--gold);border-color:var(--gold)}
+.foot{margin-top:56px;padding-top:24px;border-top:1px solid var(--line);text-align:center;color:var(--dim);font-size:12.5px}
+.foot a{color:var(--gold);text-decoration:none}
+</style></head>
+<body><div class="wrap">
+<header class="hero">
+  <div class="kicker">Gardenresearch &middot; колода поля</div>
+  <h1>Таро агентов</h1>
+  <div class="sub">Reinforcement learning и планирование как две половины одного пути — от наивного действия к синтезу</div>
+  <p class="thesis">Планирование — это поиск, который агент делает <em>сейчас</em>. RL — это поиск, который кто-то уже проделал и зашил в <em>веса</em>. Весь путь качается между тем, чтобы искать на месте, и тем, чтобы впитать найденное. 22 Старших аркана — 22 работы — в порядке не дат, а смысла: путь Шута от первого шага к завершённости. Год и число цитат на каждой карте показывают настоящую шкалу времени.</p>
+  <div class="legend">
+    <span><i class="dot d-pl"></i>планирование — поиск на инференсе</span>
+    <span><i class="dot d-rl"></i>RL — обучение в весах</span>
+    <span><i class="dot d-br"></i>мост — где они смыкаются</span>
+  </div>
+</header>
+<main>
+<h2 class="act">I. Первые шаги</h2>
+
+<article class="card" data-cluster="планирование">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">0</span><span class="tag">планирование</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Шут</h3>
+    <p class="why">Прыжок в неизвестное: первый наивный шаг.</p>
+    <hr>
+    <h4 class="paper">ReAct: Synergizing Reasoning and Acting in Language Models</h4>
+    <p class="byline">Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du &middot; 2022 &middot; 12,332 цит.</p>
+    <p class="plain">Первый шаг агента: вместо того чтобы сразу ответить, модель чередует «мысль» и «действие» — рассуждает вслух и тут же что-то делает (ищет, считает), подмешивая результат обратно в рассуждение. Отсюда выросли почти все агенты.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">While large language models (LLMs) have demonstrated impressive capabilities across tasks in language understanding and interactive decision making, their abilities for reasoning (e.g. chain-of-thought prompting) and acting (e.g. action plan generation) have primarily been studied as separate topics. In this paper, we explore the use of LLMs to generate both reasoning traces and task-specific actions in an interleaved manner, allowing for greater synergy between the two: reasoning traces help the model induce, track, and update action plans as well as handle exceptions, while actions allow it to interface with external sources, such as knowledge bases or environments, to gather additional information. We apply our approach, named ReAct, to a diverse set of language and decision making tasks and demonstrate its effectiveness over state-of-the-art baselines, as well as improved human interpretability and trustworthiness over methods without reasoning or acting components. Concretely, on question answering (HotpotQA) and fact verification (Fever), ReAct overcomes issues of hallucination and error propagation prevalent in chain-of-thought reasoning by interacting with a simple Wikipedia API, and generates human-like task-solving trajectories that are more interpretable than baselines without reasoning traces. On two interactive decision making benchmarks (ALFWorld and WebShop), ReAct outperforms imitation and reinforcement learning methods by an absolute success rate of 34% and 10% respectively, while being prompted with only one or two in-context examples. Project site with code: https://react-lm.github.io</p></details>
+    <a class="src" href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener">arxiv.org/abs/2210.03629</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="RL">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">I</span><span class="tag">RL</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Маг</h3>
+    <p class="why">Обращение сырой силы в направленную волю.</p>
+    <hr>
+    <h4 class="paper">Training language models to follow instructions with human feedback</h4>
+    <p class="byline">Long Ouyang, Jeff Wu, Xu Jiang, Diogo Almeida &middot; 2022 &middot; 24,834 цит.</p>
+    <p class="plain">Как превратить сырую способность модели в послушную волю. Людям показывают пары ответов, модель дообучают под их предпочтения через подкрепление — так язык научили делать то, что просят, а не просто продолжать текст. Фундамент всего RL над большими моделями.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">Making language models bigger does not inherently make them better at following a user&#x27;s intent. For example, large language models can generate outputs that are untruthful, toxic, or simply not helpful to the user. In other words, these models are not aligned with their users. In this paper, we show an avenue for aligning language models with user intent on a wide range of tasks by fine-tuning with human feedback. Starting with a set of labeler-written prompts and prompts submitted through the OpenAI API, we collect a dataset of labeler demonstrations of the desired model behavior, which we use to fine-tune GPT-3 using supervised learning. We then collect a dataset of rankings of model outputs, which we use to further fine-tune this supervised model using reinforcement learning from human feedback. We call the resulting models InstructGPT. In human evaluations on our prompt distribution, outputs from the 1.3B parameter InstructGPT model are preferred to outputs from the 175B GPT-3, despite having 100x fewer parameters. Moreover, InstructGPT models show improvements in truthfulness and reductions in toxic output generation while having minimal performance regressions on public NLP datasets. Even though InstructGPT still makes simple mistakes, our results show that fine-tuning with human feedback is a promising direction for aligning language models with human intent.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2203.02155" target="_blank" rel="noopener">arxiv.org/abs/2203.02155</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="RL">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">II</span><span class="tag">RL</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Жрица</h3>
+    <p class="why">Скрытое знание: суд над каждым шагом, а не только над итогом.</p>
+    <hr>
+    <h4 class="paper">Let&#x27;s Verify Step by Step</h4>
+    <p class="byline">H. Lightman, V. Kosaraju, Yura Burda, Harrison Edwards &middot; 2023 &middot; 4,877 цит.</p>
+    <p class="plain">Награждать не только за верный финальный ответ, но за каждый шаг рассуждения. Пошаговая оценка («process reward») учит надёжнее, чем оценка по итогу, — и эта же оценка потом служит внутренним судьёй, по которому ведут поиск по дереву.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">In recent years, large language models have greatly improved in their ability to perform complex multi-step reasoning. However, even state-of-the-art models still regularly produce logical mistakes. To train more reliable models, we can turn either to outcome supervision, which provides feedback for a final result, or process supervision, which provides feedback for each intermediate reasoning step. Given the importance of training reliable models, and given the high cost of human feedback, it is important to carefully compare the both methods. Recent work has already begun this comparison, but many questions still remain. We conduct our own investigation, finding that process supervision significantly outperforms outcome supervision for training models to solve problems from the challenging MATH dataset. Our process-supervised model solves 78% of problems from a representative subset of the MATH test set. Additionally, we show that active learning significantly improves the efficacy of process supervision. To support related research, we also release PRM800K, the complete dataset of 800,000 step-level human feedback labels used to train our best reward model.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2305.20050" target="_blank" rel="noopener">arxiv.org/abs/2305.20050</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="планирование">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">III</span><span class="tag">планирование</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Императрица</h3>
+    <p class="why">Плодородие структуры: сперва замысел, потом рождение.</p>
+    <hr>
+    <h4 class="paper">Plan-and-Solve Prompting: Improving Zero-Shot Chain-of-Thought Reasoning by Large Language Models</h4>
+    <p class="byline">Lei Wang, Wanyu Xu, Yi-Huai Lan, Zhi-Qiang Hu &middot; 2023 &middot; 888 цит.</p>
+    <p class="plain">Простейшая плодотворная идея планирования: сначала вслух составь план, потом исполняй по шагам. Одним промптом, без всякого обучения — и уже заметно меньше арифметических и логических срывов.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">Large language models (LLMs) have recently been shown to deliver impressive performance in various NLP tasks. To tackle multi-step reasoning tasks, Few-shot chain-of-thought (CoT) prompting includes a few manually crafted step-by-step reasoning demonstrations which enable LLMs to explicitly generate reasoning steps and improve their reasoning task accuracy. To eliminate the manual efforts, Zero-shot-CoT concatenates the target problem statement with “Let’s think step by step” as an input prompt to LLMs. Despite the success of Zero-shot-CoT, it still suffers from three pitfalls: calculation errors, missing-step errors, and semantic misunderstanding errors. To address the missing-step errors, we propose Plan-and-Solve (PS) Prompting. It consists of two components: first, devising a plan to divide the entire task into smaller subtasks, and then carrying out the subtasks according to the plan. To address the calculation errors and improve the quality of generated reasoning steps, we extend PS prompting with more detailed instructions and derive PS+ prompting. We evaluate our proposed prompting strategy on ten datasets across three reasoning problems. The experimental results over GPT-3 show that our proposed zero-shot prompting consistently outperforms Zero-shot-CoT across all datasets by a large margin, is comparable to or exceeds Zero-shot-Program-of-Thought Prompting, and has comparable performance with 8-shot CoT prompting on the math reasoning problem. The code can be found at https://github.com/AGI-Edgerunners/Plan-and-Solve-Prompting.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2305.04091" target="_blank" rel="noopener">arxiv.org/abs/2305.04091</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="планирование">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">IV</span><span class="tag">планирование</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Император</h3>
+    <p class="why">Закон и порядок: формальная власть над задачей.</p>
+    <hr>
+    <h4 class="paper">LLM+P: Empowering Large Language Models with Optimal Planning Proficiency</h4>
+    <p class="byline">B. Liu, Yu-Qian Jiang, Xiaohan Zhang, Qiang Liu &middot; 2023 &middot; 718 цит.</p>
+    <p class="plain">Честный гибрид со старой школой ИИ: модель переводит задачу на формальный язык классического планировщика (PDDL), тот находит гарантированно оптимальный план, модель переводит обратно на человеческий. Строгий порядок символического ИИ поверх языковой модели.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">Large language models (LLMs) have demonstrated remarkable zero-shot generalization abilities: state-of-the-art chatbots can provide plausible answers to many common questions that arise in daily life. However, so far, LLMs cannot reliably solve long-horizon planning problems. By contrast, classical planners, once a problem is given in a formatted way, can use efficient search algorithms to quickly identify correct, or even optimal, plans. In an effort to get the best of both worlds, this paper introduces LLM+P, the first framework that incorporates the strengths of classical planners into LLMs. LLM+P takes in a natural language description of a planning problem, then returns a correct (or optimal) plan for solving that problem in natural language. LLM+P does so by first converting the language description into a file written in the planning domain definition language (PDDL), then leveraging classical planners to quickly find a solution, and then translating the found solution back into natural language. Along with LLM+P, we define a diverse set of different benchmark problems taken from common planning scenarios. Via a comprehensive set of experiments on these benchmark problems, we find that LLM+P is able to provide optimal solutions for most problems, while LLMs fail to provide even feasible plans for most problems.\footnote{The code and results are publicly available at https://github.com/Cranial-XIX/llm-pddl.git.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2304.11477" target="_blank" rel="noopener">arxiv.org/abs/2304.11477</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="планирование">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">V</span><span class="tag">планирование</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Иерофант</h3>
+    <p class="why">Учение: как довести длинное дело до конца в живом мире.</p>
+    <hr>
+    <h4 class="paper">Describe, Explain, Plan and Select: Interactive Planning with Large Language Models Enables Open-World Multi-Task Agents</h4>
+    <p class="byline">Zihao Wang, Shaofei Cai, Guan-Zhou Chen, Anji Liu &middot; 2023 &middot; 523 цит.</p>
+    <p class="plain">Планирование в живой среде (Minecraft): опиши, объясни, спланируй, выбери — и перепланируй, когда что-то пошло не так. Доктрина того, как агент доводит длинную задачу до конца во взаимодействии с миром, а не в вакууме.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">We investigate the challenge of task planning for multi-task embodied agents in open-world environments. Two main difficulties are identified: 1) executing plans in an open-world environment (e.g., Minecraft) necessitates accurate and multi-step reasoning due to the long-term nature of tasks, and 2) as vanilla planners do not consider how easy the current agent can achieve a given sub-task when ordering parallel sub-goals within a complicated plan, the resulting plan could be inefficient or even infeasible. To this end, we propose&quot;$\underline{D}$escribe, $\underline{E}$xplain, $\underline{P}$lan and $\underline{S}$elect&quot;($\textbf{DEPS}$), an interactive planning approach based on Large Language Models (LLMs). DEPS facilitates better error correction on initial LLM-generated $\textit{plan}$ by integrating $\textit{description}$ of the plan execution process and providing self-$\textit{explanation}$ of feedback when encountering failures during the extended planning phases. Furthermore, it includes a goal $\textit{selector}$, which is a trainable module that ranks parallel candidate sub-goals based on the estimated steps of completion, consequently refining the initial plan. Our experiments mark the milestone of the first zero-shot multi-task agent that can robustly accomplish 70+ Minecraft tasks and nearly double the overall performances. Further testing reveals our method&#x27;s general effectiveness in popularly adopted non-open-ended domains as well (i.e., ALFWorld and tabletop manipulation). The ablation and exploratory studies detail how our design beats the counterparts and provide a promising update on the $\texttt{ObtainDiamond}$ grand challenge with our approach. The code is released at https://github.com/CraftJarvis/MC-Planner.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2302.01560" target="_blank" rel="noopener">arxiv.org/abs/2302.01560</a>
+  </div>
+</article>
+<h2 class="act">II. Планирование углубляется</h2>
+
+<article class="card" data-cluster="планирование">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">VI</span><span class="tag">планирование</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Влюблённые</h3>
+    <p class="why">Выбор на развилке: ветвление и возврат.</p>
+    <hr>
+    <h4 class="paper">Tree of Thoughts: Deliberate Problem Solving with Large Language Models</h4>
+    <p class="byline">Shunyu Yao, Dian Yu, Jeffrey Zhao, Izhak Shafran &middot; 2023 &middot; 5,096 цит.</p>
+    <p class="plain">Вместо одной цепочки рассуждения модель растит дерево вариантов, оценивает ветки и возвращается назад из тупиков. Рассуждение впервые открыто становится поиском по пространству мыслей.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">Language models are increasingly being deployed for general problem solving across a wide range of tasks, but are still confined to token-level, left-to-right decision-making processes during inference. This means they can fall short in tasks that require exploration, strategic lookahead, or where initial decisions play a pivotal role. To surmount these challenges, we introduce a new framework for language model inference, Tree of Thoughts (ToT), which generalizes over the popular Chain of Thought approach to prompting language models, and enables exploration over coherent units of text (thoughts) that serve as intermediate steps toward problem solving. ToT allows LMs to perform deliberate decision making by considering multiple different reasoning paths and self-evaluating choices to decide the next course of action, as well as looking ahead or backtracking when necessary to make global choices. Our experiments show that ToT significantly enhances language models&#x27; problem-solving abilities on three novel tasks requiring non-trivial planning or search: Game of 24, Creative Writing, and Mini Crosswords. For instance, in Game of 24, while GPT-4 with chain-of-thought prompting only solved 4% of tasks, our method achieved a success rate of 74%. Code repo with all prompts: https://github.com/princeton-nlp/tree-of-thought-llm.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2305.10601" target="_blank" rel="noopener">arxiv.org/abs/2305.10601</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="планирование">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">VII</span><span class="tag">планирование</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Колесница</h3>
+    <p class="why">Управление движением: дробить только там, где буксуешь.</p>
+    <hr>
+    <h4 class="paper">ADaPT: As-Needed Decomposition and Planning with Language Models</h4>
+    <p class="byline">Archiki Prasad, Alexander Koller, Mareike Hartmann, Peter Clark &middot; 2023 &middot; 239 цит.</p>
+    <p class="plain">Управляемая декомпозиция: дели задачу на подзадачи не всегда, а только там, где агент сам не справился. Глубже правишь — где застрял; где едет само, не трогаешь. Планирование по мере необходимости.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">Large Language Models (LLMs) are increasingly being used for interactive decision-making tasks requiring planning and adapting to the environment. Recent works employ LLMs-as-agents in broadly two ways: iteratively determining the next action (iterative executors) or generating plans and executing sub-tasks using LLMs (plan-and-execute). However, these methods struggle with task complexity, as the inability to execute any sub-task may lead to task failure. To address these shortcomings, we introduce As-Needed Decomposition and Planning for complex Tasks (ADaPT), an approach that explicitly plans and decomposes complex sub-tasks as-needed, i.e., when the LLM is unable to execute them. ADaPT recursively decomposes sub-tasks to adapt to both task complexity and LLM capability. Our results demonstrate that ADaPT substantially outperforms established strong baselines, achieving success rates up to 28.3% higher in ALFWorld, 27% in WebShop, and 33% in TextCraft -- a novel compositional dataset that we introduce. Through extensive analysis, we illustrate the importance of multilevel decomposition and establish that ADaPT dynamically adjusts to the capabilities of the executor LLM as well as to task complexity.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2311.05772" target="_blank" rel="noopener">arxiv.org/abs/2311.05772</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="RL">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">VIII</span><span class="tag">RL</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Сила</h3>
+    <p class="why">Сила через работу с собственным провалом.</p>
+    <hr>
+    <h4 class="paper">Reflexion: language agents with verbal reinforcement learning</h4>
+    <p class="byline">Noah Shinn, Federico Cassano, Edward Berman, A. Gopinath &middot; 2023 &middot; 5,920 цит.</p>
+    <p class="plain">Агент не меняет свои веса, а словами записывает в память, где ошибся, и на следующей попытке это учитывает. «Вербальный RL» — обучение опытом через язык, самый лёгкий мост между «перепланировал» и «научился».</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">Large language models (LLMs) have been increasingly used to interact with external environments (e.g., games, compilers, APIs) as goal-driven agents. However, it remains challenging for these language agents to quickly and efficiently learn from trial-and-error as traditional reinforcement learning methods require extensive training samples and expensive model fine-tuning. We propose Reflexion, a novel framework to reinforce language agents not by updating weights, but instead through linguistic feedback. Concretely, Reflexion agents verbally reflect on task feedback signals, then maintain their own reflective text in an episodic memory buffer to induce better decision-making in subsequent trials. Reflexion is flexible enough to incorporate various types (scalar values or free-form language) and sources (external or internally simulated) of feedback signals, and obtains significant improvements over a baseline agent across diverse tasks (sequential decision-making, coding, language reasoning). For example, Reflexion achieves a 91% pass@1 accuracy on the HumanEval coding benchmark, surpassing the previous state-of-the-art GPT-4 that achieves 80%. We also conduct ablation and analysis studies using different feedback signals, feedback incorporation methods, and agent types, and provide insights into how they affect performance.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2303.11366" target="_blank" rel="noopener">arxiv.org/abs/2303.11366</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="планирование">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">IX</span><span class="tag">планирование</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Отшельник</h3>
+    <p class="why">Уход внутрь: искать план в модели мира у себя в голове.</p>
+    <hr>
+    <h4 class="paper">Reasoning with Language Model is Planning with World Model</h4>
+    <p class="byline">Shibo Hao, Yi Gu, Haodi Ma, Joshua Hong &middot; 2023 &middot; 1,197 цит.</p>
+    <p class="plain">Модель используют как модель мира и ищут план внутри неё методом Монте-Карло (MCTS), мысленно проигрывая последствия ходов. Работа прямо приравнивает рассуждение к планированию в воображаемом мире.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">Large language models (LLMs) have shown remarkable reasoning capabilities, especially when prompted to generate intermediate reasoning steps (e.g., Chain-of-Thought, CoT). However, LLMs can still struggle with problems that are easy for humans, such as generating action plans for executing tasks in a given environment, or performing complex math, logical, and commonsense reasoning. The deficiency stems from the key fact that LLMs lack an internal $\textit{world model}$ to predict the world $\textit{state}$ (e.g., environment status, intermediate variable values) and simulate long-term outcomes of actions. This prevents LLMs from performing deliberate planning akin to human brains, which involves exploring alternative reasoning paths, anticipating future states and rewards, and iteratively refining existing reasoning steps. To overcome the limitations, we propose a new LLM reasoning framework, $\underline{R}$easoning vi$\underline{a}$ $\underline{P}$lanning $\textbf{(RAP)}$. RAP repurposes the LLM as both a world model and a reasoning agent, and incorporates a principled planning algorithm (based on Monto Carlo Tree Search) for strategic exploration in the vast reasoning space. During reasoning, the LLM (as agent) incrementally builds a reasoning tree under the guidance of the LLM (as world model) and task-specific rewards, and obtains a high-reward reasoning path efficiently with a proper balance between exploration $\textit{vs.}$ exploitation. We apply RAP to a variety of challenging reasoning problems including plan generation, math reasoning, and logical inference. Empirical results on these tasks demonstrate the superiority of RAP over various strong baselines, including CoT and least-to-most prompting with self-consistency. RAP on LLAMA-33B surpasses CoT on GPT-4 with 33% relative improvement in a plan generation setting.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2305.14992" target="_blank" rel="noopener">arxiv.org/abs/2305.14992</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="планирование">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">X</span><span class="tag">планирование</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Колесо Фортуны</h3>
+    <p class="why">Перебор и соединение: мысли не только ветвятся, но и сливаются.</p>
+    <hr>
+    <h4 class="paper">Graph of Thoughts: Solving Elaborate Problems with Large Language Models</h4>
+    <p class="byline">Maciej Besta, Nils Blach, Aleš Kubíček, Robert Gerstenberger &middot; 2023 &middot; 1,630 цит.</p>
+    <p class="plain">Обобщение дерева до графа: частичные решения можно комбинировать и переиспользовать, а не только ветвить. Колесо перебирает возможности и соединяет их в новые.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">We introduce Graph of Thoughts (GoT): a framework that
+advances prompting capabilities in large language models
+(LLMs) beyond those offered by paradigms such as 
+Chain-of-Thought or Tree of Thoughts (ToT). The key idea and 
+primary advantage of GoT is the ability to model the information 
+generated by an LLM as an arbitrary graph, where units of 
+information (&quot;LLM thoughts&quot;) are vertices, and edges correspond
+to dependencies between these vertices. This approach enables 
+combining arbitrary LLM thoughts into synergistic outcomes, 
+distilling the essence of whole networks of thoughts,
+or enhancing thoughts using feedback loops. We illustrate
+that GoT offers advantages over state of the art on different
+tasks, for example increasing the quality of sorting by 62%
+over ToT, while simultaneously reducing costs by &gt;31%.
+We ensure that GoT is extensible with new thought 
+transformations and thus can be used to spearhead new prompting
+schemes. This work brings the LLM reasoning closer to human 
+thinking or brain mechanisms such as recurrence, both
+of which form complex networks</p></details>
+    <a class="src" href="https://arxiv.org/abs/2308.09687" target="_blank" rel="noopener">arxiv.org/abs/2308.09687</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="RL">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">XI</span><span class="tag">RL</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Справедливость</h3>
+    <p class="why">Прямое взвешивание лучше-хуже, без громоздкого суда.</p>
+    <hr>
+    <h4 class="paper">Direct Preference Optimization: Your Language Model is Secretly a Reward Model</h4>
+    <p class="byline">Rafael Rafailov, Archit Sharma, E. Mitchell, S. Ermon &middot; 2023 &middot; 10,967 цит.</p>
+    <p class="plain">Оказалось, выровнять модель по человеческим предпочтениям можно без отдельной модели награды и тяжёлого RL — одной функцией потерь, прямо из пар «этот ответ лучше того». Справедливость без громоздкого аппарата.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">While large-scale unsupervised language models (LMs) learn broad world knowledge and some reasoning skills, achieving precise control of their behavior is difficult due to the completely unsupervised nature of their training. Existing methods for gaining such steerability collect human labels of the relative quality of model generations and fine-tune the unsupervised LM to align with these preferences, often with reinforcement learning from human feedback (RLHF). However, RLHF is a complex and often unstable procedure, first fitting a reward model that reflects the human preferences, and then fine-tuning the large unsupervised LM using reinforcement learning to maximize this estimated reward without drifting too far from the original model. In this paper we introduce a new parameterization of the reward model in RLHF that enables extraction of the corresponding optimal policy in closed form, allowing us to solve the standard RLHF problem with only a simple classification loss. The resulting algorithm, which we call Direct Preference Optimization (DPO), is stable, performant, and computationally lightweight, eliminating the need for sampling from the LM during fine-tuning or performing significant hyperparameter tuning. Our experiments show that DPO can fine-tune LMs to align with human preferences as well as or better than existing methods. Notably, fine-tuning with DPO exceeds PPO-based RLHF in ability to control sentiment of generations, and matches or improves response quality in summarization and single-turn dialogue while being substantially simpler to implement and train.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2305.18290" target="_blank" rel="noopener">arxiv.org/abs/2305.18290</a>
+  </div>
+</article>
+<h2 class="act">III. Обучение преображает</h2>
+
+<article class="card" data-cluster="мост">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">XII</span><span class="tag">мост</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Повешенный</h3>
+    <p class="why">Пауза ради прозрения: взгляд из подвешенности.</p>
+    <hr>
+    <h4 class="paper">Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters</h4>
+    <p class="byline">C. Snell, Jaehoon Lee, Kelvin Xu, Aviral Kumar &middot; 2024 &middot; 2,269 цит.</p>
+    <p class="plain">Если дать модели думать и искать дольше на самой трудной задаче, это бывает выгоднее, чем раздувать её размер. Время размышления на инференсе и обучение в весах — взаимозаменяемые валюты ума. Ключ ко всей связи RL и планирования.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">Enabling LLMs to improve their outputs by using more test-time computation is a critical step towards building generally self-improving agents that can operate on open-ended natural language. In this paper, we study the scaling of inference-time computation in LLMs, with a focus on answering the question: if an LLM is allowed to use a fixed but non-trivial amount of inference-time compute, how much can it improve its performance on a challenging prompt? Answering this question has implications not only on the achievable performance of LLMs, but also on the future of LLM pretraining and how one should tradeoff inference-time and pre-training compute. Despite its importance, little research attempted to understand the scaling behaviors of various test-time inference methods. Moreover, current work largely provides negative results for a number of these strategies. In this work, we analyze two primary mechanisms to scale test-time computation: (1) searching against dense, process-based verifier reward models; and (2) updating the model&#x27;s distribution over a response adaptively, given the prompt at test time. We find that in both cases, the effectiveness of different approaches to scaling test-time compute critically varies depending on the difficulty of the prompt. This observation motivates applying a&quot;compute-optimal&quot;scaling strategy, which acts to most effectively allocate test-time compute adaptively per prompt. Using this compute-optimal strategy, we can improve the efficiency of test-time compute scaling by more than 4x compared to a best-of-N baseline. Additionally, in a FLOPs-matched evaluation, we find that on problems where a smaller base model attains somewhat non-trivial success rates, test-time compute can be used to outperform a 14x larger model.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2408.03314" target="_blank" rel="noopener">arxiv.org/abs/2408.03314</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="RL">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">XIII</span><span class="tag">RL</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Смерть</h3>
+    <p class="why">Перерождение: старый рецепт умирает, рассуждение рождается заново.</p>
+    <hr>
+    <h4 class="paper">DeepSeek-R1 incentivizes reasoning in LLMs through reinforcement learning</h4>
+    <p class="byline">DeepSeek-AI, Daya Guo, De-Jian Yang, Hao-Wei Zhang &middot; 2025 &middot; 5,860 цит.</p>
+    <p class="plain">Чистый RL за верный исход, без единого рукописного примера рассуждения, сам рождает декомпозицию, возвраты и самопроверку — тот самый «ага-момент». Планирование оказывается не отдельным модулем, а поведением, которое RL находит сам.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">General reasoning represents a long-standing and formidable challenge in artificial intelligence (AI). Recent breakthroughs, exemplified by large language models (LLMs)1,2 and chain-of-thought (CoT) prompting3, have achieved considerable success on foundational reasoning tasks. However, this success is heavily contingent on extensive human-annotated demonstrations and the capabilities of models are still insufficient for more complex problems. Here we show that the reasoning abilities of LLMs can be incentivized through pure reinforcement learning (RL), obviating the need for human-labelled reasoning trajectories. The proposed RL framework facilitates the emergent development of advanced reasoning patterns, such as self-reflection, verification and dynamic strategy adaptation. Consequently, the trained model achieves superior performance on verifiable tasks such as mathematics, coding competitions and STEM fields, surpassing its counterparts trained through conventional supervised learning on human demonstrations. Moreover, the emergent reasoning patterns exhibited by these large-scale models can be systematically used to guide and enhance the reasoning capabilities of smaller models. A new artificial intelligence model, DeepSeek-R1, is introduced, demonstrating that the reasoning abilities of large language models can be incentivized through pure reinforcement learning, removing the need for human-annotated demonstrations.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2501.12948" target="_blank" rel="noopener">arxiv.org/abs/2501.12948</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="RL">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">XIV</span><span class="tag">RL</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Умеренность</h3>
+    <p class="why">Сплав в нужной пропорции: рассуждение и поиск.</p>
+    <hr>
+    <h4 class="paper">Search-R1: Training LLMs to Reason and Leverage Search Engines with Reinforcement Learning</h4>
+    <p class="byline">Bowen Jin, Hansi Zeng, Zhenrui Yue, Jinsung Yoon &middot; 2025 &middot; 1,585 цит.</p>
+    <p class="plain">RL учит модель вплетать вызовы поиска прямо в рассуждение — когда остановиться, спросить внешний мир, вернуться к мысли. Алхимический сплав: не поиск вместо рассуждения и не наоборот, а выученная мера того и другого.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">Efficiently acquiring external knowledge and up-to-date information is essential for effective reasoning and text generation in large language models (LLMs). Prompting advanced LLMs with reasoning capabilities to use search engines during inference is often suboptimal, as the LLM might not fully possess the capability on how to interact optimally with the search engine. This paper introduces Search-R1, an extension of reinforcement learning (RL) for reasoning frameworks where the LLM learns to autonomously generate (multiple) search queries during step-by-step reasoning with real-time retrieval. Search-R1 optimizes LLM reasoning trajectories with multi-turn search interactions, leveraging retrieved token masking for stable RL training and a simple outcome-based reward function. Experiments on seven question-answering datasets show that Search-R1 improves performance by 41% (Qwen2.5-7B) and 20% (Qwen2.5-3B) over various RAG baselines under the same setting. This paper further provides empirical insights into RL optimization methods, LLM choices, and response length dynamics in retrieval-augmented reasoning. The code and model checkpoints are available at https://github.com/PeterGriffinJin/Search-R1.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2503.09516" target="_blank" rel="noopener">arxiv.org/abs/2503.09516</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="RL">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">XV</span><span class="tag">RL</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Дьявол</h3>
+    <p class="why">Соблазн простого сигнала — и его оковы.</p>
+    <hr>
+    <h4 class="paper">ToolRL: Reward is All Tool Learning Needs</h4>
+    <p class="byline">Cheng Qian, Emre Can Acikgoz, Qi He, Hongru Wang &middot; 2025 &middot; 389 цит.</p>
+    <p class="plain">«Награда — это всё, что нужно для обучения инструментам»: правильно спроектированная награда учит выбирать и применять инструменты лучше, чем обучение на примерах. Но за соблазном простого сигнала прячется риск его взлома — reward hacking, оковы метрики.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">Current Large Language Models (LLMs) often undergo supervised fine-tuning (SFT) to acquire tool use capabilities. However, SFT struggles to generalize to unfamiliar or complex tool use scenarios. Recent advancements in reinforcement learning (RL), particularly with R1-like models, have demonstrated promising reasoning and generalization abilities. Yet, reward design for tool use presents unique challenges: multiple tools may be invoked with diverse parameters, and coarse-grained reward signals, such as answer matching, fail to offer the finegrained feedback required for effective learning. In this work, we present the first comprehensive study on reward design for tool selection and application tasks within the RL paradigm. We systematically explore a wide range of reward strategies, analyzing their types, scales, granularity, and temporal dynamics. Building on these insights, we propose a principled reward design tailored for tool use tasks and apply it to train LLMs using Group Relative Policy Optimization (GRPO). Empirical evaluations across diverse benchmarks demonstrate that our approach yields robust, scalable, and stable training, achieving a 17% improvement over base models and a 15% gain over SFT models. These results highlight the critical role of thoughtful reward design in enhancing the tool use capabilities and generalization performance of LLMs. All the codes are released to facilitate future research.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2504.13958" target="_blank" rel="noopener">arxiv.org/abs/2504.13958</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="RL">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">XVI</span><span class="tag">RL</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Башня</h3>
+    <p class="why">Внезапный прорыв, обрушение прежних пределов.</p>
+    <hr>
+    <h4 class="paper">ReTool: Reinforcement Learning for Strategic Tool Use in LLMs</h4>
+    <p class="byline">Jiazhan Feng, Shijue Huang, Xing-Wei Qu, Ge Zhang &middot; 2025 &middot; 411 цит.</p>
+    <p class="plain">RL с исполнением кода прямо внутри рассуждения даёт скачок на олимпиадной математике и эмерджентное самоисправление кода. Вспышка: прежние пределы текстового рассуждения рушатся, когда модель учат звать интерпретатор по ходу мысли.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">While reasoning models (e.g., DeepSeek R1) trained with reinforcement learning (RL), excel in textual reasoning, they struggle in scenarios requiring structured problem-solving, such as geometric reasoning, concise computation, or complex equation solving-areas where computational tools like code interpreters (CI) demonstrate distinct advantages. To bridge this gap, we propose ReTool, which enhances long-form reasoning with tool-integrated learning, including two key features: (1) dynamic interleaving of real-time code execution within natural language reasoning processes, and (2) an automated RL paradigm that allows policy rollouts with multi-turn real-time code execution and teaches the model in learning when and how to invoke tools based on outcome feedback. ReTool employs a systematic training framework, beginning with synthetic cold-start data generation to produce code-augmented long-form reasoning traces for fine-tuning base models. Subsequent RL training leverages task outcomes as rewards to iteratively refine the model&#x27;s tool use strategy, enabling autonomous discovery of optimal tool invocation patterns without human priors. Experiments on the challenging MATH Olympiad benchmark AIME demonstrate ReTool&#x27;s superiority: Our 32B model achieves 67% accuracy with 400 training steps, outperforming text-based RL baseline (40% accuracy, 1080 steps) in efficiency and performance. Remarkably, ReTool-32B attains 72.5% accuracy in extended settings, surpassing OpenAI&#x27;s o1-preview by 27.9%. Further analysis reveals emergent behaviors such as code self-correction, signaling an &#x27;&#x27;aha moment&#x27;&#x27; in which the model autonomously masters adaptive tool use. These findings highlight the promise of outcome-driven tool integration for advancing complex mathematical reasoning and offer new insights into hybrid neuro-symbolic systems.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2504.11536" target="_blank" rel="noopener">arxiv.org/abs/2504.11536</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="мост">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">XVII</span><span class="tag">мост</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Звезда</h3>
+    <p class="why">Надежда и ориентир: поиску можно научить.</p>
+    <hr>
+    <h4 class="paper">Stream of Search (SoS): Learning to Search in Language</h4>
+    <p class="byline">Kanishk Gandhi, D. Lee, Gabriel Grand, Mu-Xin Liu &middot; 2024 &middot; 175 цит.</p>
+    <p class="plain">Если показать модели сам процесс поиска — вместе с тупиками и возвратами — она учится искать «в уме», без внешнего дерева. Звезда-ориентир всей темы: планирование можно впитать прямо в веса.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">Language models are rarely shown fruitful mistakes while training. They then struggle to look beyond the next token, suffering from a snowballing of errors and struggling to predict the consequence of their actions several steps ahead. In this paper, we show how language models can be taught to search by representing the process of search in language, as a flattened string -- a stream of search (SoS). We propose a unified language for search that captures an array of different symbolic search strategies. We demonstrate our approach using the simple yet difficult game of Countdown, where the goal is to combine input numbers with arithmetic operations to reach a target number. We pretrain a transformer-based language model from scratch on a dataset of streams of search generated by heuristic solvers. We find that SoS pretraining increases search accuracy by 25% over models trained to predict only the optimal search trajectory. We further finetune this model with two policy improvement methods: Advantage-Induced Policy Alignment (APA) and Self-Taught Reasoner (STaR). The finetuned SoS models solve 36% of previously unsolved problems, including problems that cannot be solved by any of the heuristic solvers. Our results indicate that language models can learn to solve problems via search, self-improve to flexibly use different search strategies, and potentially discover new ones.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2404.03683" target="_blank" rel="noopener">arxiv.org/abs/2404.03683</a>
+  </div>
+</article>
+<h2 class="act">IV. Синтез</h2>
+
+<article class="card" data-cluster="мост">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">XVIII</span><span class="tag">мост</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Луна</h3>
+    <p class="why">Свет при неполной ясности: поиск сквозь туман возможностей.</p>
+    <hr>
+    <h4 class="paper">Everything of Thoughts: Defying the Law of Penrose Triangle for Thought Generation</h4>
+    <p class="byline">Ruomeng Ding, Chao-Yun Zhang, Lu Wang, Yong Xu &middot; 2023 &middot; 102 цит.</p>
+    <p class="plain">MCTS в связке с обучением с подкреплением ведёт модель сквозь пространство вариантов, прорывая «треугольник Пенроуза» — компромисс между качеством, гибкостью и стоимостью. Поиск при неполном свете, где раньше приходилось чем-то жертвовать.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">Recent advancements in Large Language Models (LLMs) have revolutionized decision-making by breaking down complex problems into more manageable language sequences referred to as&quot;thoughts&quot;. An effective thought design should consider three key perspectives: performance, efficiency, and flexibility. However, existing thought can at most exhibit two of these attributes. To address these limitations, we introduce a novel thought prompting approach called&quot;Everything of Thoughts&quot;(XoT) to defy the law of&quot;Penrose triangle of existing thought paradigms. XoT leverages pretrained reinforcement learning and Monte Carlo Tree Search (MCTS) to incorporate external domain knowledge into thoughts, thereby enhancing LLMs&#x27; capabilities and enabling them to generalize to unseen problems efficiently. Through the utilization of the MCTS-LLM collaborative thought revision framework, this approach autonomously produces high-quality comprehensive cognitive mappings with minimal LLM interactions. Additionally, XoT empowers LLMs to engage in unconstrained thinking, allowing for flexible cognitive mappings for problems with multiple solutions. We evaluate XoT on several challenging multi-solution problem-solving tasks, including Game of 24, 8-Puzzle, and Pocket Cube. Our results demonstrate that XoT significantly outperforms existing approaches. Notably, XoT can yield multiple solutions with just one LLM call, showcasing its remarkable proficiency in addressing complex problems across diverse domains.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2311.04254" target="_blank" rel="noopener">arxiv.org/abs/2311.04254</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="мост">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">XIX</span><span class="tag">мост</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Солнце</h3>
+    <p class="why">Благой круг зажёгся: искать — учиться на найденном — искать лучше.</p>
+    <hr>
+    <h4 class="paper">ReST-MCTS*: LLM Self-Training via Process Reward Guided Tree Search</h4>
+    <p class="byline">Dan Zhang, Sining Zhoubian, Zi-Niu Hu, Yi-Song Yue &middot; 2024 &middot; 527 цит.</p>
+    <p class="plain">Поиск по дереву, ведомый пошаговой наградой, сам порождает хорошие траектории → ими дообучают модель → она ищет ещё лучше. Солнце ясности: петля «планирование порождает данные для обучения» наконец работает — паттерн AlphaZero у языковых моделей.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">Recent methodologies in LLM self-training mostly rely on LLM generating responses and filtering those with correct output answers as training data. This approach often yields a low-quality fine-tuning training set (e.g., incorrect plans or intermediate reasoning). In this paper, we develop a reinforced self-training approach, called ReST-MCTS*, based on integrating process reward guidance with tree search MCTS* for collecting higher-quality reasoning traces as well as per-step value to train policy and reward models. ReST-MCTS* circumvents the per-step manual annotation typically used to train process rewards by tree-search-based reinforcement learning: Given oracle final correct answers, ReST-MCTS* is able to infer the correct process rewards by estimating the probability this step can help lead to the correct answer. These inferred rewards serve dual purposes: they act as value targets for further refining the process reward model and also facilitate the selection of high-quality traces for policy model self-training. We first show that the tree-search policy in ReST-MCTS* achieves higher accuracy compared with prior LLM reasoning baselines such as Best-of-N and Tree-of-Thought, within the same search budget. We then show that by using traces searched by this tree-search policy as training data, we can continuously enhance the three language models for multiple iterations, and outperform other self-training algorithms such as ReST$^\text{EM}$ and Self-Rewarding LM. We release all code at https://github.com/THUDM/ReST-MCTS.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2406.03816" target="_blank" rel="noopener">arxiv.org/abs/2406.03816</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="мост">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">XX</span><span class="tag">мост</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Суд</h3>
+    <p class="why">Суд по исходу и восхождение на новый уровень.</p>
+    <hr>
+    <h4 class="paper">Agent Q: Advanced Reasoning and Learning for Autonomous AI Agents</h4>
+    <p class="byline">Pranav Putta, Edmund Mills, Naman Garg, S. Motwani &middot; 2024 &middot; 224 цит.</p>
+    <p class="plain">MCTS собирает удачные и провальные траектории веб-агента, а обучение на их сравнении (DPO) поднимает его выше. Поиск-планирование и RL замкнуты в один контур: агента судят по результату и он перерождается сильнее.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">Large Language Models (LLMs) have shown remarkable capabilities in natural language tasks requiring complex reasoning, yet their application in agentic, multi-step reasoning within interactive environments remains a difficult challenge. Traditional supervised pre-training on static datasets falls short in enabling autonomous agent capabilities needed to perform complex decision-making in dynamic settings like web navigation. Previous attempts to bridge this ga-through supervised fine-tuning on curated expert demonstrations-often suffer from compounding errors and limited exploration data, resulting in sub-optimal policy outcomes. To overcome these challenges, we propose a framework that combines guided Monte Carlo Tree Search (MCTS) search with a self-critique mechanism and iterative fine-tuning on agent interactions using an off-policy variant of the Direct Preference Optimization (DPO) algorithm. Our method allows LLM agents to learn effectively from both successful and unsuccessful trajectories, thereby improving their generalization in complex, multi-step reasoning tasks. We validate our approach in the WebShop environment-a simulated e-commerce platform where it consistently outperforms behavior cloning and reinforced fine-tuning baseline, and beats average human performance when equipped with the capability to do online search. In real-world booking scenarios, our methodology boosts Llama-3 70B model&#x27;s zero-shot performance from 18.6% to 81.7% success rate (a 340% relative increase) after a single day of data collection and further to 95.4% with online search. We believe this represents a substantial leap forward in the capabilities of autonomous agents, paving the way for more sophisticated and reliable decision-making in real-world settings.</p></details>
+    <a class="src" href="https://arxiv.org/abs/2408.07199" target="_blank" rel="noopener">arxiv.org/abs/2408.07199</a>
+  </div>
+</article>
+
+<article class="card" data-cluster="мост">
+  <div class="card-inner">
+    <div class="card-top"><span class="num">XXI</span><span class="tag">мост</span></div>
+    <div class="emblem">&#10022;</div>
+    <h3 class="arc">Мир</h3>
+    <p class="why">Целостность: всё, что разбирали по частям, сомкнуто в одно.</p>
+    <hr>
+    <h4 class="paper">Language Agent Tree Search Unifies Reasoning Acting and Planning in Language Models</h4>
+    <p class="byline">Andy Zhou, Kai Yan, Michal Shlapentokh-Rothman, Hao-Han Wang &middot; 2023 &middot; 695 цит.</p>
+    <p class="plain">Прямо в названии соединяет рассуждение, действие и планирование — через поиск по дереву (MCTS) с оценкой ценности и рефлексией поверх языковой модели. Мир как завершённость: поиск, обучение и действие в едином механизме.</p>
+    <details><summary>Абстракт (оригинал)</summary><p class="abstract">While language models (LMs) have shown potential across a range of decision-making tasks, their reliance on simple acting processes limits their broad deployment as autonomous agents. In this paper, we introduce Language Agent Tree Search (LATS) -- the first general framework that synergizes the capabilities of LMs in reasoning, acting, and planning. By leveraging the in-context learning ability of LMs, we integrate Monte Carlo Tree Search into LATS to enable LMs as agents, along with LM-powered value functions and self-reflections for proficient exploration and enhanced decision-making. A key feature of our approach is the incorporation of an environment for external feedback, which offers a more deliberate and adaptive problem-solving mechanism that surpasses the constraints of existing techniques. Our experimental evaluation across diverse domains, including programming, interactive question-answering (QA), web navigation, and math, validates the effectiveness and generality of LATS in decision-making while maintaining competitive or improved reasoning performance. Notably, LATS achieves state-of-the-art pass@1 accuracy (92.7%) for programming on HumanEval with GPT-4 and demonstrates gradient-free performance (average score of 75.9) comparable to gradient-based fine-tuning for web navigation on WebShop with GPT-3.5. Code can be found at https://github.com/lapisrocks/LanguageAgentTreeSearch</p></details>
+    <a class="src" href="https://arxiv.org/abs/2310.04406" target="_blank" rel="noopener">arxiv.org/abs/2310.04406</a>
+  </div>
+</article>
+</main>
+<footer class="foot">
+  Цитаты — снимок Semantic Scholar на 9 октября 2026. Порядок смысловой, не хронологический.<br>
+  Собрано для лекции по агентам. &#10022;
+</footer>
+</div>
+<script>
+// подкрасить тег-точку по кластеру
+document.querySelectorAll('.card').forEach(function(c){
+  var cl=c.getAttribute('data-cluster');var t=c.querySelector('.tag');
+  if(!t)return; var col = cl==='RL'?'#d98a8a':(cl==='планирование'?'#8ab0d9':'#c9a24b');
+  t.style.color=col; t.style.borderColor=col;
+});
+</script>
+</body></html>
