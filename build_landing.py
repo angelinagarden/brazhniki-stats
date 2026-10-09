@@ -23,6 +23,7 @@ STATS = HERE / "stats.json"
 CAT = HERE / "cat_stats.json"
 CHAN = HERE / "channel.json"
 DIGESTS = HERE / "digests_topics.json"
+GIVEAWAYS = HERE / "giveaways.json"
 
 RU_DOW = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
 
@@ -154,6 +155,8 @@ def build_data() -> dict:
         "counts": [len(vs) for _, vs in monthly],
     }
 
+    giveaways = json.loads(GIVEAWAYS.read_text()) if GIVEAWAYS.exists() else {}
+
     return {
         "channel": chan,
         "stats": stats,
@@ -161,6 +164,7 @@ def build_data() -> dict:
         "cat_order": CAT_ORDER,
         "cat_labels": CAT_LABELS,
         "cat_colors": CAT_COLORS,
+        "giveaways": giveaways,
         "timeline": {
             "week_keys": week_keys,
             "series": timeline_series,
@@ -364,6 +368,7 @@ footer .legal{font-size:11px;color:#888;margin-top:40px;padding-top:20px;
     <a href="#topics">тематика</a>
     <a href="#when">когда</a>
     <a href="#reactions">реакции</a>
+    <a href="#giveaways">розыгрыши</a>
     <a href="#top">топ-посты</a>
     <a href="https://t.me/butterflies_and_berliners" target="_blank">канал →</a>
   </nav>
@@ -449,6 +454,44 @@ footer .legal{font-size:11px;color:#888;margin-top:40px;padding-top:20px;
       <p class="lead">Наша фирменная реакция &mdash; <span class="hl">❤&zwj;🔥</span> (пламенное сердце), почти половина всех. Классический 👍 заметно ниже популярных эмоций — наше ядро не кивает нейтрально, оно влюбляется в эвент.</p>
 
       <div class="emoji-row" id="emoji-row"></div>
+    </section>
+
+    <section id="giveaways">
+      <h2>Розыгрыши.</h2>
+      <p class="lead">Посты, где мы разыгрываем билеты / приглашения среди подписчиков. Детектор строгий — только явные маркеры («розыгрыш», «разыгрываем», «дарим N билетов»), чтобы не ловить описания призов внутри ивентов.</p>
+
+      <div class="kpis" style="border-top:1px solid var(--line);margin-bottom:24px">
+        <div class="kpi"><div class="n" id="g-total">—</div><div class="l">всего розыгрышей</div></div>
+        <div class="kpi"><div class="n" id="g-share">—</div><div class="l">от всех постов</div></div>
+        <div class="kpi"><div class="n" id="g-avg-views">—</div><div class="l">avg views</div></div>
+        <div class="kpi"><div class="n" id="g-avg-rx">—</div><div class="l">avg реакций</div></div>
+        <div class="kpi"><div class="n" id="g-bursts">—</div><div class="l">серий подряд</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <p class="chart-title">По месяцам</p>
+          <p class="chart-sub">сколько розыгрышей в каждом месяце</p>
+          <div id="chart-g-month" class="chart"></div>
+        </div>
+        <div>
+          <p class="chart-title">По тематике</p>
+          <p class="chart-sub">какие ивенты мы разыгрываем чаще всего</p>
+          <div id="chart-g-cat" class="chart"></div>
+        </div>
+      </div>
+
+      <div class="grid-1" style="margin-top:24px">
+        <p class="chart-title">Серии розыгрышей (burst'ы)</p>
+        <p class="chart-sub">подряд идущие розыгрыши в пределах 3 дней — обычно это кампания под фестиваль</p>
+        <div id="g-bursts-list"></div>
+      </div>
+
+      <div class="grid-1" style="margin-top:24px">
+        <p class="chart-title">Все 46 розыгрышей</p>
+        <p class="chart-sub">клик — открыть пост в Telegram</p>
+        <div class="toplist" id="g-all"></div>
+      </div>
     </section>
 
     <section id="domains">
@@ -747,6 +790,93 @@ const catColor = c => D.cat_colors[c] || '#999';
     li.innerHTML = `<span><span class="b" style="width:${Math.round(c/maxM*120)}px"></span>${m}</span><span class="n">${c}</span>`;
     root2.appendChild(li);
   }
+})();
+
+// -------- giveaways: KPIs + charts + bursts + list --------
+(function(){
+  const G = D.giveaways;
+  if (!G || !G.total) return;
+  const $ = id => document.getElementById(id);
+  $('g-total').textContent = G.total;
+  $('g-share').textContent = G.share_pct + '%';
+  $('g-avg-views').textContent = fmt(G.views.giveaway_avg);
+  $('g-avg-rx').textContent = G.reactions.giveaway_avg;
+  $('g-bursts').textContent = (G.bursts || []).length;
+
+  // month bar
+  (function(){
+    const months = Object.keys(G.by_month);
+    const vals = months.map(m => G.by_month[m]);
+    const chart = echarts.init($('chart-g-month'));
+    chart.setOption({
+      tooltip:{trigger:'axis', axisPointer:{type:'shadow'}},
+      grid:{left:50,right:20,top:20,bottom:40},
+      xAxis:{type:'category',data:months,
+        axisLabel:{fontFamily:'JetBrains Mono'}},
+      yAxis:{type:'value',minInterval:1,splitLine:{lineStyle:{color:'#eee'}},
+        axisLabel:{fontFamily:'JetBrains Mono'}},
+      series:[{type:'bar',data:vals,barWidth:'60%',
+        itemStyle:{color:'#f1c40f'},
+        label:{show:true,position:'top',fontFamily:'JetBrains Mono'}}],
+    });
+    window.addEventListener('resize',()=>chart.resize());
+  })();
+
+  // category donut
+  (function(){
+    const data = Object.entries(G.by_category)
+      .sort((a,b)=>b[1]-a[1])
+      .map(([k,v]) => ({name: catLabel(k), value: v,
+        itemStyle:{color: catColor(k)}}));
+    const chart = echarts.init($('chart-g-cat'));
+    chart.setOption({
+      tooltip:{trigger:'item',formatter:'<b>{b}</b><br>{c} розыгрыш{d}'},
+      legend:{bottom:0,textStyle:{fontFamily:'Inter',fontSize:12}},
+      series:[{type:'pie', radius:['42%','72%'], center:['50%','44%'],
+        itemStyle:{borderColor:'#fff',borderWidth:2},
+        label:{show:true,formatter:'{b}: {c}',fontFamily:'Inter',fontSize:11},
+        data}],
+    });
+    window.addEventListener('resize',()=>chart.resize());
+  })();
+
+  // bursts list
+  (function(){
+    const el = $('g-bursts-list');
+    if (!G.bursts || !G.bursts.length) { el.innerHTML = '<p class="chart-sub">—</p>'; return; }
+    el.innerHTML = '<ul class="dom-list" style="font-size:14px">' +
+      G.bursts.map(b => {
+        const links = b.ids.map(id => `<a href="https://t.me/butterflies_and_berliners/${id}" target="_blank">#${id}</a>`).join(' ');
+        return `<li>
+          <span><b>${b.start} → ${b.end}</b> &nbsp; <span class="mono" style="color:var(--muted)">${b.n} розыгрыш${b.n%10===1?'':'ей'}, ${fmt(b.total_views)} views, ${b.total_rx} rx</span><br>
+          <span style="font-size:12px;color:var(--muted)">${links}</span></span>
+        </li>`;
+      }).join('') + '</ul>';
+  })();
+
+  // all list
+  (function(){
+    const root = $('g-all');
+    G.all.forEach((p, i) => {
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `
+        <div class="rank">${i+1}</div>
+        <div class="meta">
+          <span class="tag" style="background:${catColor(p.cat)};color:#fff">${catLabel(p.cat)}</span><br>
+          ${p.date}
+        </div>
+        <div class="txt">
+          <a href="https://t.me/butterflies_and_berliners/${p.id}" target="_blank">${p.text.replace(/</g,'&lt;')}</a>
+        </div>
+        <div class="nums">
+          <div class="v">${fmt(p.views)}</div><div>views</div>
+          <div style="margin-top:6px"><b>${p.rx}</b> rx</div>
+        </div>
+      `;
+      root.appendChild(row);
+    });
+  })();
 })();
 
 // -------- top-25 list --------

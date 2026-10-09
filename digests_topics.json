@@ -1,0 +1,364 @@
+{
+  "6": {
+    "id": 6,
+    "date": "2026-04-23T18:03:23+00:00",
+    "total_events": 15,
+    "by_category": {
+      "exhibitions": 3,
+      "food_market": 3,
+      "club_party": 3,
+      "music_concert": 2,
+      "cinema": 1,
+      "lectures_talks": 3
+    }
+  },
+  "17": {
+    "id": 17,
+    "date": "2026-04-27T11:38:20+00:00",
+    "total_events": 24,
+    "by_category": {
+      "exhibitions": 3,
+      "food_market": 3,
+      "club_party": 6,
+      "music_concert": 3,
+      "cinema": 9
+    }
+  },
+  "29": {
+    "id": 29,
+    "date": "2026-05-04T18:09:09+00:00",
+    "total_events": 24,
+    "by_category": {
+      "exhibitions": 6,
+      "food_market": 2,
+      "music_concert": 4,
+      "theatre_dance": 5,
+      "cinema": 7
+    }
+  },
+  "45": {
+    "id": 45,
+    "date": "2026-05-11T13:32:18+00:00",
+    "total_events": 32,
+    "by_category": {
+      "exhibitions": 5,
+      "music_concert": 6,
+      "theatre_dance": 6,
+      "cinema": 15
+    }
+  },
+  "63": {
+    "id": 63,
+    "date": "2026-05-18T16:52:21+00:00",
+    "total_events": 35,
+    "by_category": {
+      "exhibitions": 7,
+      "music_concert": 7,
+      "theatre_dance": 5,
+      "cinema": 16
+    }
+  },
+  "80": {
+    "id": 80,
+    "date": "2026-05-25T07:00:02+00:00",
+    "total_events": 51,
+    "by_category": {
+      "other": 10,
+      "food_market": 1,
+      "music_classical": 2,
+      "theatre_dance": 10,
+      "music_concert": 8,
+      "cinema": 11,
+      "club_party": 5,
+      "exhibitions": 4
+    }
+  },
+  "100": {
+    "id": 100,
+    "date": "2026-06-01T12:10:01+00:00",
+    "total_events": 41,
+    "by_category": {
+      "cinema": 15,
+      "other": 6,
+      "theatre_dance": 4,
+      "club_party": 5,
+      "music_concert": 2,
+      "exhibitions": 4,
+      "music_classical": 4,
+      "food_market": 1
+    }
+  },
+  "131": {
+    "id": 131,
+    "date": "2026-06-08T13:50:33+00:00",
+    "total_events": 42,
+    "by_category": {
+      "music_concert": 2,
+      "other": 7,
+      "lectures_talks": 2,
+      "cinema": 15,
+      "club_party": 3,
+      "exhibitions": 6,
+      "music_classical": 4,
+      "outdoor_sports": 1,
+      "food_market": 2
+    }
+  },
+  "150": {
+    "id": 150,
+    "date": "2026-06-15T14:50:39+00:00",
+    "total_events": 36,
+    "by_category": {
+      "club_party": 6,
+      "theatre_dance": 2,
+      "cinema": 12,
+      "music_concert": 3,
+      "exhibitions": 6,
+      "other": 5,
+      "music_classical": 2
+    }
+  },
+  "172": {
+    "id": 172,
+    "date": "2026-06-22T12:31:06+00:00",
+    "total_events": 34,
+    "by_category": {
+      "cinema": 9,
+      "music_classical": 3,
+      "theatre_dance": 3,
+      "music_concert": 4,
+      "club_party": 4,
+      "exhibitions": 2,
+      "lectures_talks": 2,
+      "other": 7
+    }
+  },
+  "195": {
+    "id": 195,
+    "date": "2026-06-29T14:24:10+00:00",
+    "total_events": 37,
+    "by_category": {
+      "cinema": 11,
+      "other": 6,
+      "club_party": 6,
+      "music_classical": 3,
+      "exhibitions": 8,
+      "lectures_talks": 1,
+      "food_market": 1,
+      "outdoor_sports": 1
+    }
+  },
+  "217": {
+    "id": 217,
+    "date": "2026-07-06T15:58:43+00:00",
+    "total_events": 37,
+    "by_category": {
+      "cinema": 11,
+      "other": 12,
+      "club_party": 6,
+      "music_classical": 4,
+      "exhibitions": 2,
+      "food_market": 1,
+      "music_concert": 1
+    }
+  },
+  "242": {
+    "id": 242,
+    "date": "2026-07-13T14:01:57+00:00",
+    "total_events": 37,
+    "by_category": {
+      "music_concert": 6,
+      "cinema": 9,
+      "music_classical": 1,
+      "exhibitions": 7,
+      "club_party": 5,
+      "other": 6,
+      "theatre_dance": 1,
+      "lectures_talks": 1,
+      "food_market": 1
+    }
+  },
+  "300": {
+    "id": 300,
+    "date": "2026-07-20T14:53:13+00:00",
+    "total_events": 35,
+    "by_category": {
+      "cinema": 13,
+      "lectures_talks": 4,
+      "club_party": 3,
+      "other": 3,
+      "exhibitions": 6,
+      "theatre_dance": 3,
+      "food_market": 2,
+      "music_classical": 1
+    }
+  },
+  "318": {
+    "id": 318,
+    "date": "2026-07-27T12:04:20+00:00",
+    "total_events": 39,
+    "by_category": {
+      "exhibitions": 10,
+      "cinema": 12,
+      "music_concert": 2,
+      "theatre_dance": 5,
+      "lectures_talks": 1,
+      "music_classical": 3,
+      "club_party": 3,
+      "other": 3
+    }
+  },
+  "335": {
+    "id": 335,
+    "date": "2026-08-03T12:56:48+00:00",
+    "total_events": 29,
+    "by_category": {
+      "music_classical": 4,
+      "cinema": 9,
+      "music_concert": 1,
+      "club_party": 1,
+      "other": 6,
+      "exhibitions": 5,
+      "theatre_dance": 2,
+      "food_market": 1
+    }
+  },
+  "357": {
+    "id": 357,
+    "date": "2026-08-10T13:01:48+00:00",
+    "total_events": 29,
+    "by_category": {
+      "music_classical": 3,
+      "cinema": 7,
+      "music_concert": 3,
+      "exhibitions": 6,
+      "other": 6,
+      "club_party": 2,
+      "lectures_talks": 1,
+      "theatre_dance": 1
+    }
+  },
+  "376": {
+    "id": 376,
+    "date": "2026-08-17T15:15:57+00:00",
+    "total_events": 40,
+    "by_category": {
+      "cinema": 9,
+      "other": 17,
+      "theatre_dance": 2,
+      "music_concert": 4,
+      "music_classical": 2,
+      "exhibitions": 1,
+      "club_party": 2,
+      "outdoor_sports": 1,
+      "food_market": 2
+    }
+  },
+  "395": {
+    "id": 395,
+    "date": "2026-08-24T10:58:01+00:00",
+    "total_events": 36,
+    "by_category": {
+      "club_party": 3,
+      "music_concert": 5,
+      "cinema": 14,
+      "exhibitions": 4,
+      "music_classical": 3,
+      "lectures_talks": 1,
+      "other": 4,
+      "theatre_dance": 1,
+      "food_market": 1
+    }
+  },
+  "423": {
+    "id": 423,
+    "date": "2026-08-31T16:40:18+00:00",
+    "total_events": 41,
+    "by_category": {
+      "other": 16,
+      "cinema": 3,
+      "exhibitions": 6,
+      "club_party": 6,
+      "music_classical": 5,
+      "music_concert": 2,
+      "outdoor_sports": 2,
+      "food_market": 1
+    }
+  },
+  "446": {
+    "id": 446,
+    "date": "2026-09-07T12:48:21+00:00",
+    "total_events": 35,
+    "by_category": {
+      "other": 9,
+      "lectures_talks": 1,
+      "music_classical": 5,
+      "cinema": 3,
+      "exhibitions": 5,
+      "club_party": 7,
+      "theatre_dance": 4,
+      "music_concert": 1
+    }
+  },
+  "475": {
+    "id": 475,
+    "date": "2026-09-14T11:03:49+00:00",
+    "total_events": 34,
+    "by_category": {
+      "exhibitions": 7,
+      "other": 12,
+      "music_classical": 6,
+      "club_party": 1,
+      "music_concert": 2,
+      "cinema": 4,
+      "theatre_dance": 1,
+      "food_market": 1
+    }
+  },
+  "505": {
+    "id": 505,
+    "date": "2026-09-21T13:54:29+00:00",
+    "total_events": 33,
+    "by_category": {
+      "cinema": 6,
+      "club_party": 4,
+      "music_concert": 4,
+      "other": 10,
+      "theatre_dance": 2,
+      "outdoor_sports": 2,
+      "lectures_talks": 1,
+      "music_classical": 1,
+      "food_market": 1,
+      "exhibitions": 2
+    }
+  },
+  "526": {
+    "id": 526,
+    "date": "2026-09-28T14:26:01+00:00",
+    "total_events": 37,
+    "by_category": {
+      "exhibitions": 4,
+      "theatre_dance": 2,
+      "cinema": 4,
+      "other": 14,
+      "music_concert": 1,
+      "music_classical": 3,
+      "club_party": 7,
+      "food_market": 2
+    }
+  },
+  "553": {
+    "id": 553,
+    "date": "2026-10-05T12:42:54+00:00",
+    "total_events": 41,
+    "by_category": {
+      "music_concert": 2,
+      "other": 15,
+      "music_classical": 7,
+      "club_party": 13,
+      "cinema": 2,
+      "theatre_dance": 1,
+      "exhibitions": 1
+    }
+  }
+}
